@@ -33,3 +33,15 @@ exports.createPurchase = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+
+// Function to get all purchases
+exports.getAllPurchases = async (req, res) => {
+  try {
+    // Fetch all purchases from the database
+    const purchases = await Purchase.find();
+    res.json(purchases);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

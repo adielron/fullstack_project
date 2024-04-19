@@ -1,6 +1,7 @@
 // controllers/customerController.js
 
 const Customer = require('../models/Customer');
+const { lock } = require('../routes/ItemRoutes');
 
 // Controller actions for customers
 exports.getAllCustomers = async (req, res) => {
@@ -12,48 +13,80 @@ exports.getAllCustomers = async (req, res) => {
   }
 };
 
-exports.getCustomerById = async (req, res) => {
-  try {
-    const customer = await Customer.findById(req.params.id);
-    if (!customer) {
-      return res.status(404).json({ message: 'Customer not found' });
+exports.getCustomerByEmail = async (req, res) => {
+
+    try {
+      const { email } = req.query; // Extract email from query parameters
+      console.log(email);
+      const customer = await Customer.findOne({ email });
+  
+      if (!customer) {
+        return res.status(404).json({ message: 'Customer not found' });
+      }
+      res.json(customer);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
     }
-    res.json(customer);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
+  };
+
+
+
+
+
+
+
 
 exports.createCustomer = async (req, res) => {
-  const newCustomer = new Customer(req.body);
+// console.log("create customer");
   try {
+    const newCustomer = new Customer(req.body);
     const savedCustomer = await newCustomer.save();
     res.status(201).json(savedCustomer);
   } catch (err) {
     res.status(400).json({ message: err.message });
+    // console.log("error");
+
   }
 };
 
 exports.updateCustomer = async (req, res) => {
-  try {
-    const updatedCustomer = await Customer.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updatedCustomer) {
-      return res.status(404).json({ message: 'Customer not found' });
+    try {
+      const { email } = req.body; // Assuming email is sent in the request body
+      const updatedCustomer = await Customer.findOneAndUpdate({ email }, req.body, { new: true });
+      if (!updatedCustomer) {
+        return res.status(404).json({ message: 'Customer not found' });
+      }
+      res.json(updatedCustomer);
+    } catch (err) {
+      res.status(400).json({ message: err.message });
     }
-    res.json(updatedCustomer);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-};
+  };
+  
 
-exports.deleteCustomer = async (req, res) => {
-  try {
-    const deletedCustomer = await Customer.findByIdAndDelete(req.params.id);
-    if (!deletedCustomer) {
-      return res.status(404).json({ message: 'Customer not found' });
+  exports.deleteCustomer = async (req, res) => {
+    try {
+      const { email } = req.body; // Assuming email is sent in the request body
+      const deletedCustomer = await Customer.findOneAndDelete({ email });
+      if (!deletedCustomer) {
+        return res.status(404).json({ message: 'Customer not found' });
+      }
+      res.json({ message: 'Customer deleted successfully' });
+    } catch (err) {
+      res.status(400).json({ message: err.message });
     }
-    res.json({ message: 'Customer deleted successfully' });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-};
+  };
+  
+
+  exports.getCustomerByEmailReg = async (email) => {
+    try {
+      const customer = await Customer.findOne({ email });
+  
+      if (!customer) {
+        throw new Error('Customer not found');
+      }
+  
+      return customer;
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  };
