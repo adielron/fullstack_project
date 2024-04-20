@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Form</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h2>Login Form</h2>
+
+<form id="loginForm">
+  <label for="name">Username:</label><br>
+  <input type="text" id="name" name="name"><br>
+  <label for="email">Email:</label><br>
+  <input type="email" id="email" name="email" required><br>
+  <label for="password">Password:</label><br>
+  <input type="password" id="password" name="password" required><br>
+  <label for="phone">Phone:</label><br>
+  <input type="text" id="phone" name="phone"><br>
+  <label for="address">Address:</label><br>
+  <input type="text" id="address" name="address"><br>
+  <label for="role">Role:</label><br>
+  <select id="role" name="role">
+    <option value="customer">Customer</option>
+    <option value="worker">Worker</option>
+    <option value="manager">Manager</option>
+  </select><br><br>
+  <button type="submit">Submit</button>
+</form>
+
+<script>
+$(document).ready(function() {
+  $('#loginForm').submit(function(event) {
+    event.preventDefault();
+
+    var formData = {
+      username: $('#name').val(),
+      email: $('#email').val(),
+      password: $('#password').val(),
+      phone: $('#phone').val(),
+      address: $('#address').val(),
+      role: $('#role').val()
+    };
+
+    var url = '';
+    if (formData.role === 'customer') {
+      url = 'http://localhost:3000/auth/register/other';
+    } else if (formData.role === 'worker') {
+      url = 'http://localhost:3000/auth/register/other';
+    } else if (formData.role === 'manager') {
+      url = 'http://localhost:3000/auth/register/manager';
+    }
+
+    $.ajax({
+      type: 'POST',
+      url: url,
+      data: JSON.stringify(formData),
+      contentType: 'application/json',
+      success: function(response) {
+        console.log(response);
+        console.log("weird");
+
+        // Handle success response
+        window.location.href = '/item'; // Redirect to '/item' on success
+
+      },
+      error: function(xhr, status, error) {
+        console.error(error);
+        // Handle error
+      },
+      xhrFields: {
+        withCredentials: true
+      },
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+  });
+});
+</script>
+
+</body>
+</html>

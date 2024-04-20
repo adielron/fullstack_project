@@ -44,9 +44,10 @@ exports.createManager = async (req, res) => {
   const newManager = new Manager(req.body);
   try {
     const savedManager = await newManager.save();
-    res.status(201).json(savedManager);
+    res.status(201);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400)
+    console.log(err.message);
   }
 };
 

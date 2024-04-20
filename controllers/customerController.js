@@ -1,7 +1,6 @@
 // controllers/customerController.js
 
 const Customer = require('../models/Customer');
-const { lock } = require('../routes/ItemRoutes');
 
 // Controller actions for customers
 exports.getAllCustomers = async (req, res) => {
@@ -41,7 +40,7 @@ exports.createCustomer = async (req, res) => {
   try {
     const newCustomer = new Customer(req.body);
     const savedCustomer = await newCustomer.save();
-    res.status(201).json(savedCustomer);
+    res.status(201).json({message:"created user"})
   } catch (err) {
     res.status(400).json({ message: err.message });
     // console.log("error");

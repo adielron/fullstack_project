@@ -6,8 +6,10 @@ const itemController = require('../controllers/itemController');
 
 // Middleware function to check if the user is a worker
 function checkWorkerRole(req, res, next) {
+    console.log('cheching role for creating item');
     // Check if the user is authenticated and has the role of "worker"
-    if (req.isAuthenticated() && req.user.role === 'worker') {
+    console.log(req.isAuthenticated());
+    if (req.isAuthenticated() && req.user.role !== 'customer' ) {
         // If the user is a worker, proceed to the next middleware/route handler
         next();
     } else {

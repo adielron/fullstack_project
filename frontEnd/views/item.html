@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Item</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Create Item</h1>
+    <form id="createItemForm">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description" rows="4" required></textarea><br><br>
+
+        <label for="price">Price:</label><br>
+        <input type="number" id="price" name="price" min="0" step="0.01" required><br><br>
+
+        <label for="weight">Weight:</label><br>
+        <input type="text" id="weight" name="weight"><br><br>
+
+        <label for="madeIn">Made In:</label><br>
+        <input type="text" id="madeIn" name="madeIn"><br><br>
+
+        <label for="color">Color:</label><br>
+        <input type="text" id="color" name="color"><br><br>
+
+        <label for="distributor">Distributor:</label><br>
+        <input type="text" id="distributor" name="distributor"><br><br>
+
+        <label for="quality">Quality:</label><br>
+        <input type="text" id="quality" name="quality"><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <script>
+$(document).ready(function() {
+    $('#createItemForm').submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Serialize the form data
+        var formData = $(this).serialize();
+
+        // Send a POST request to the backend
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:3000/items',
+            data: formData,
+            contentType: 'application/x-www-form-urlencoded', // Specify the content type
+            xhrFields: {
+                withCredentials: true // Include credentials (cookies)
+            },
+            headers: {
+                'Accept': 'application/json', // Specify the accepted content type
+                'Content-Type': 'application/x-www-form-urlencoded' // Specify the content type
+            },
+            success: function(response) {
+                // Handle the successful response
+                console.log('Item created successfully:', response);
+            },
+            error: function(xhr, status, error) {
+                // Handle errors
+                console.error('Error creating item:', error);
+            }
+        });
+    });
+});
+    </script>
+</body>
+</html>
