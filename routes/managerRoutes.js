@@ -16,7 +16,7 @@ router.get('/:email', managerController.getManagerByEmail); // Get manager by em
 
 router.get('/', managerController.getAllManagers);
 router.post('/', managerController.createManager);
-router.put('/', managerController.updateManager); // Update manager by email
-router.delete('/', managerController.deleteManager); // Delete manager by email
+router.put('/:email', managerController.updateManager); // Update manager by email
+router.delete('/:email', managerController.deleteManager); // Delete manager by email
 
 module.exports = router;

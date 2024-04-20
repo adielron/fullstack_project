@@ -51,7 +51,8 @@ exports.createCustomer = async (req, res) => {
 
 exports.updateCustomer = async (req, res) => {
     try {
-      const { email } = req.body; // Assuming email is sent in the request body
+      const  email  = req.params.email; // Assuming email is sent in the request body\
+      console.log(email);
       const updatedCustomer = await Customer.findOneAndUpdate({ email }, req.body, { new: true });
       if (!updatedCustomer) {
         return res.status(404).json({ message: 'Customer not found' });
@@ -65,7 +66,7 @@ exports.updateCustomer = async (req, res) => {
 
   exports.deleteCustomer = async (req, res) => {
     try {
-      const { email } = req.body; // Assuming email is sent in the request body
+      const  email  = req.params.email; // Assuming email is sent in the request body\
       const deletedCustomer = await Customer.findOneAndDelete({ email });
       if (!deletedCustomer) {
         return res.status(404).json({ message: 'Customer not found' });

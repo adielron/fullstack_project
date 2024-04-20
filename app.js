@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const passportConfig = require('./passport-config'); // Adjust the path as needed
+require('dotenv').config();
 
 const session = require('express-session');
 
@@ -42,8 +43,9 @@ app.use('/managers', managersRoutes);
 
 app.use('/auth', authRouter);
 
-const uri = 'mongodb+srv://adielron:5WZgfuzAosHYdqep@cluster0.gfkrzlb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+const password = process.env.MONGODB_PASSWORD;
 
+const uri = `mongodb+srv://adielron:${password}@cluster0.gfkrzlb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Connect to MongoDB
 mongoose.connect(uri)

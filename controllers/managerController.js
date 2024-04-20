@@ -29,7 +29,7 @@ exports.getAllManagers = async (req, res) => {
 
 exports.getManagerByEmail = async (req, res) => {
   try {
-    const { email } = req.query;
+    const email  = req.params.email;
     const manager = await Manager.findOne({ email });
     if (!manager) {
       return res.status(404).json({ message: 'Manager not found' });
@@ -52,7 +52,7 @@ exports.createManager = async (req, res) => {
 
 exports.updateManager = async (req, res) => {
   try {
-    const { email } = req.query;
+    const email  = req.params.email;
     const updatedManager = await Manager.findOneAndUpdate({ email }, req.body, { new: true });
     if (!updatedManager) {
       return res.status(404).json({ message: 'Manager not found' });
@@ -65,7 +65,7 @@ exports.updateManager = async (req, res) => {
 
 exports.deleteManager = async (req, res) => {
   try {
-    const { email } = req.query;
+    const email  = req.params.email;
     const deletedManager = await Manager.findOneAndDelete({ email });
     if (!deletedManager) {
       return res.status(404).json({ message: 'Manager not found' });
