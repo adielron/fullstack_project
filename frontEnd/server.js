@@ -23,6 +23,16 @@ app.get('/maps', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'maps.html'));
 });
 
+app.get('/groupBy', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'groupBy.html'));
+});
+
+app.get('/search', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'search.html'));
+});
+
+
+
 // Start the server
 app.listen(port, () => {
     console.log(`Frontend server is running at http://localhost:${port}`);

@@ -1,0 +1,123 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .search-button {
+            padding: 8px 16px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <h1>Search Items</h1>
+    
+    <!-- Dropdown for group by option -->
+    <select id="groupByOption">
+        <option value="name">Name</option>
+        <option value="madeIn">Made In</option>
+        <option value="color">Color</option>
+        <option value="distributor">Distributor</option>
+        <option value="quality">Quality</option>
+    </select>
+
+    <!-- Search button -->
+    <button id="searchButton" class="search-button">Search</button>
+
+    <div id="itemList">
+        <!-- Item list will be dynamically populated here -->
+    </div>
+
+    <script>
+        // Function to include HTML file
+        function includeHTML(filePath, targetElement, callback) {
+            fetch(filePath)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load HTML file');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    // Inject HTML content into target element
+                    document.getElementById(targetElement).innerHTML = html;
+                    if (callback) callback();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Call includeHTML function to include navbar.html and then load navbar.js
+        includeHTML('navbar.html', 'navbar', function() {
+            // Load navbar.js after navbar.html is included
+            var script = document.createElement('script');
+            script.src = 'navbar.js';
+            document.body.appendChild(script);
+        });
+
+        // Function to display items based on search query and group by option
+        function displayItems(items) {
+            const itemList = document.getElementById('itemList');
+            itemList.innerHTML = '';
+
+            items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('item');
+                itemDiv.textContent = `${item._id} - Number of Items: ${item.totalItems}`;
+                itemList.appendChild(itemDiv);
+            });
+
+            if (items.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.textContent = 'No items found.';
+                itemList.appendChild(noResults);
+            }
+        }
+
+        // Event listener for search button click
+        document.getElementById('searchButton').addEventListener('click', function() {
+            const groupByOption = document.getElementById('groupByOption').value;
+            fetchItems(groupByOption);
+        });
+
+        async function fetchItems(groupByOption) {
+            try {
+                const response = await fetch(`http://localhost:3000/items/group-by-dynamic?groupBy=${groupByOption}`);
+                const items = await response.json();
+                console.log(items);
+                displayItems(items);
+                // renderGraphs(items);  // You can call renderGraphs if needed
+            } catch (error) {
+                console.error('Error fetching items:', error);
+            }
+        }
+    </script>
+</body>
+</html>

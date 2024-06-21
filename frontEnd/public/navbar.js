@@ -43,7 +43,6 @@ function checkAuthentication() {
         // Update the navbar based on the authentication status
         var authStatusElement = document.getElementById('authStatus');
         if (authStatusElement) {
-            console.log(data.isAuthenticated);
             if (data.isAuthenticated ) {
                 authStatusElement.innerHTML = '<a ><b>Manager</a> </b>| <a href="logout.html">Logout</a>';
             } else {
