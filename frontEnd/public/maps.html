@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maps</title>
+    <script src="https://www.bing.com/api/maps/mapcontrol?key=ApsBmst2FQ5jNlB3rU2ru-aDMWpo1s6ydhgmVhIoqgUqxlJcnbEZGJ_EY9V6-De4" async defer></script>
+    <script src="maps.js"></script>
+    <style>
+        #map {
+            width: 100%;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar"></div>
+    <div id="map"></div>
+
+    <script>
+        // Function to include HTML file
+        function includeHTML(filePath, targetElement, callback) {
+            fetch(filePath)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load HTML file');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    // Inject HTML content into target element
+                    document.getElementById(targetElement).innerHTML = html;
+                    if (callback) callback();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Call includeHTML function to include navbar.html and then load navbar.js
+        includeHTML('navbar.html', 'navbar', function() {
+            // Load navbar.js after navbar.html is included
+            var script = document.createElement('script');
+            script.src = 'navbar.js';
+            document.body.appendChild(script);
+        });
+    </script>
+</body>
+</html>

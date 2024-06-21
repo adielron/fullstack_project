@@ -8,6 +8,36 @@
 </head>
 <body>
 
+  <div id="navbar"></div>
+  <script>
+      // Function to include HTML file
+      function includeHTML(filePath, targetElement, callback) {
+          fetch(filePath)
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error('Failed to load HTML file');
+                  }
+                  return response.text();
+              })
+              .then(html => {
+                  // Inject HTML content into target element
+                  document.getElementById(targetElement).innerHTML = html;
+                  if (callback) callback();
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+              });
+      }
+
+      // Call includeHTML function to include navbar.html and then load navbar.js
+      includeHTML('navbar.html', 'navbar', function() {
+          // Load navbar.js after navbar.html is included
+          var script = document.createElement('script');
+          script.src = 'navbar.js';
+          document.body.appendChild(script);
+      });
+  </script>
+
 <h2>Login Form</h2>
 
 <form id="loginForm">

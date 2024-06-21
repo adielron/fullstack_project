@@ -11,6 +11,7 @@ const itemSchema = new mongoose.Schema({
   color: { type: String },   // Adding color field
   distributor: { type: String }, // Adding distributor field
   quality: { type: String }, // Adding quality field
+  img: { type: String }, // Adding quality field
   purchases: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Purchase' }] // Reference to the Purchase model
 
 });

@@ -81,6 +81,25 @@ router.post('/register/other', async (req, res, next) => {
 });
 
 
+router.get('/status', (req, res) => {
+    console.log("backend check ");
+    if (req.isAuthenticated() && req.user) {
+        res.json({
+            isAuthenticated: true,
+            user: req.user
+        });
+        console.log("autherized  ");
+
+    } else {
+        res.json({
+            isAuthenticated: false
+        });
+    }
+});
+
+
+
+
 
 
 router.post('/login', passport.authenticate('local'), (req, res) => {

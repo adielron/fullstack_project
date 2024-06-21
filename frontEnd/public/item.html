@@ -7,6 +7,38 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
+    <div id="navbar"></div>
+    <script>
+        // Function to include HTML file
+        function includeHTML(filePath, targetElement, callback) {
+            fetch(filePath)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load HTML file');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    // Inject HTML content into target element
+                    document.getElementById(targetElement).innerHTML = html;
+                    if (callback) callback();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Call includeHTML function to include navbar.html and then load navbar.js
+        includeHTML('navbar.html', 'navbar', function() {
+            // Load navbar.js after navbar.html is included
+            var script = document.createElement('script');
+            script.src = 'navbar.js';
+            document.body.appendChild(script);
+        });
+    </script>
+
+
+
     <h1>Create Item</h1>
     <form id="createItemForm">
         <label for="name">Name:</label><br>
@@ -36,6 +68,11 @@
         <input type="submit" value="Submit">
     </form>
 
+
+    <div id="errorMessage" style="color: red; display: none;">
+        Error creating item. Only employees can add items to the store 
+    </div>
+
     <script>
 $(document).ready(function() {
     $('#createItemForm').submit(function(event) {
@@ -59,11 +96,15 @@ $(document).ready(function() {
             },
             success: function(response) {
                 // Handle the successful response
+                $('#errorMessage').hide();
+
                 console.log('Item created successfully:', response);
             },
             error: function(xhr, status, error) {
                 // Handle errors
-                console.error('Error creating item:', error);
+                console.error('Only employees can add items to the store ', error);
+                $('#errorMessage').show();
+
             }
         });
     });

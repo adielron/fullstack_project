@@ -36,7 +36,7 @@ exports.getCustomerByEmail = async (req, res) => {
 
 
 exports.createCustomer = async (req, res) => {
-// console.log("create customer");
+console.log("create customer");
   try {
     const newCustomer = new Customer(req.body);
     const savedCustomer = await newCustomer.save();

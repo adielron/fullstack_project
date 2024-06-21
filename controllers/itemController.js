@@ -4,6 +4,7 @@ const Item = require('../models/Item');
 
 // Controller actions for items
 exports.getAllItems = async (req, res) => {
+  console.log("ffffff");
   try {
     const items = await Item.find();
     res.json(items);
@@ -25,6 +26,7 @@ exports.getItemById = async (req, res) => {
 };
 
 exports.createItem = async (req, res) => {
+  console.log("creating item");
   const newItem = new Item(req.body);
   try {
     const savedItem = await newItem.save();
@@ -75,7 +77,6 @@ exports.getItemsByCriteria = async (req, res) => {
       if (weight) {
         query.weight = weight;
       }
-  
       // Find items matching the criteria
       const items = await Item.find(query);
   

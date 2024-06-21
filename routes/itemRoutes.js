@@ -9,7 +9,7 @@ function checkWorkerRole(req, res, next) {
     console.log('cheching role for creating item');
     // Check if the user is authenticated and has the role of "worker"
     console.log(req.isAuthenticated());
-    if (req.isAuthenticated() && req.user.role !== 'customer' ) {
+    if (req.isAuthenticated() && req.user.role !== 'Manager' ) {
         // If the user is a worker, proceed to the next middleware/route handler
         next();
     } else {

@@ -7,7 +7,9 @@ const express = require('express');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const cookieSession = require('cookie-session');
+
 const mongoose = require('mongoose');
+
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const cors = require('cors');
@@ -103,7 +105,7 @@ const uri = `mongodb+srv://adielron:${password}@cluster0.gfkrzlb.mongodb.net/?re
 
 
 
-// Connect to MongoDB
+// Connect to MongoDB-start port 
 mongoose.connect(uri)
   .then(() => {
     console.log('Connected to MongoDB');
@@ -116,8 +118,7 @@ mongoose.connect(uri)
 
 
 
-  // Function to search for a match across all collections
-// Function to search for a match across all collections
+// Function to search for a match across all collections-strategy
 async function searchAllCollections(username, password) {
   try {
       const collections = await mongoose.connection.db.collections();
@@ -139,7 +140,7 @@ async function searchAllCollections(username, password) {
   }
 }
 
-// Function to search for a document by ID across all collections
+// Function to search for a document by ID across all collections - deserilize
 async function findDocumentByID(id) {
   try {
       // Iterate over all registered models in Mongoose
