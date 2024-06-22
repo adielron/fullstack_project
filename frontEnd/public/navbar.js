@@ -39,14 +39,16 @@ function checkAuthentication() {
         return response.json();
     })
     .then(data => {
-        console.log(data);
+        console.log(data.user);
+
         // Update the navbar based on the authentication status
         var authStatusElement = document.getElementById('authStatus');
         if (authStatusElement) {
             if (data.isAuthenticated ) {
+                localStorage.setItem('isAuthenticated', data.user._id);
                 authStatusElement.innerHTML = '<a ><b>Manager</a> </b>| <a href="logout.html">Logout</a>';
             } else {
-                authStatusElement.innerHTML = '<a href="login.html">Login / Register </a> ';
+                authStatusElement.innerHTML = '<a href="/">Login / Register </a> ';
             }
         } else {
             console.error('authStatus element not found');

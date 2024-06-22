@@ -7,6 +7,8 @@ const port = 4000;
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
+
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
@@ -31,6 +33,17 @@ app.get('/search', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'search.html'));
 });
 
+app.get('/search_c', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'search_c.html'));
+});
+
+app.get('/cart', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'cart.html'));
+});
+
+app.get('/api', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'api.html'));
+});
 
 
 // Start the server

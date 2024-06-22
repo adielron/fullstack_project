@@ -11,8 +11,14 @@
     <div id="navbar"></div>
     <div id="authStatus"></div>
 
+
+
     <h1>Shop</h1>
-    <div class="item-container" id="itemContainer"></div>
+
+    <h1 id="cartSummary" style="top: 60px; right: 300px;">
+        Cart: <span id="cartItemCount">0</span> items
+    </h1>
+    <div class="item-container" id="itemContainer">  </div>
     
     <!-- Containers for the graphs -->
 
@@ -68,6 +74,9 @@
             document.body.appendChild(script);
         });
 
+        let cart = [];
+
+
         async function fetchItems() {
             try {
                 const response = await fetch('http://localhost:3000/items');
@@ -105,6 +114,8 @@
 
                 const button = document.createElement('button');
                 button.textContent = 'Add to Cart';
+                button.addEventListener('click', () => addToCart(item)); // Add click event listener
+
 
                 itemDiv.appendChild(img);
                 itemDiv.appendChild(name);
@@ -116,6 +127,25 @@
                 itemContainer.appendChild(itemDiv);
             });
         }
+
+
+        function addToCart(item) {
+            cart.push(item); // Add item to cart array
+            updateCartSummary(); // Update cart summary
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            console.log('Item added to cart:', item);
+            console.log('Cart:', cart);
+            // Optionally update UI to show cart contents
+            // Example: displayCart();
+        }
+
+        function updateCartSummary() {
+            const cartItemCount = document.getElementById('cartItemCount');
+            cartItemCount.textContent = cart.length; // Update cart item count
+        }
+
+
 
         function renderGraphs(items) {
             // Check for missing properties and log them

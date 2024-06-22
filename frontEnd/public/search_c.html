@@ -51,26 +51,20 @@
 <body>
     <div id="navbar"></div>
 
-    <h1>Advanced Item Search</h1>
+    <h1>Advanced Search Item By Criteria  </h1>
 
     <!-- Advanced Search Form -->
     <div id="advancedSearchForm">
         <div class="form-group">
-            <input type="text" id="priceInput" class="search-input" placeholder="Price...">
-            <select id="qualityInput" class="search-input">
-                <option value="">Select Quality</option>
-                <option value="High">High</option>
-                <option value="Mid">Mid</option>
-                <option value="Low">Low</option>
-            </select>
-            <input type="text" id="distributorInput" class="search-input" placeholder="Distributor...">
+            <input type="text" id="colorInput" class="search-input" placeholder="Color...">
+            <input type="text" id="madeInInput" class="search-input" placeholder="Made In...">
+            <input type="text" id="weightInput" class="search-input" placeholder="Weight...">
         </div>
         <button id="advancedSearchButton" class="search-button">Search</button>
     </div>
 
     <div class="item-container" id="itemContainer">  </div>
         <!-- Item list will be dynamically populated here -->
-    </div>
 
     <script>
         // Function to include HTML file
@@ -151,15 +145,15 @@
 
         // Event listener for advanced search button click
         document.getElementById('advancedSearchButton').addEventListener('click', function() {
-            const price = document.getElementById('priceInput').value.trim();
-            const quality = document.getElementById('qualityInput').value.trim();
-            const distributor = document.getElementById('distributorInput').value.trim();
-            fetchAdvancedSearch(price, quality, distributor);
+            const color = document.getElementById('colorInput').value.trim();
+            const madeIn = document.getElementById('madeInInput').value.trim();
+            const weight = document.getElementById('weightInput').value.trim();
+            fetchAdvancedSearch(color, madeIn, weight);
         });
 
-        async function fetchAdvancedSearch(price, quality, distributor) {
+        async function fetchAdvancedSearch(color, madeIn, weight) {
             try {
-                const response = await fetch(`http://localhost:3000/items/price-and-quality?price=${price}&quality=${quality}&distributor=${distributor}`);
+                const response = await fetch(`http://localhost:3000/items/criteria?color=${color}&madeIn=${madeIn}&weight=${weight}`);
                 const items = await response.json();
                 console.log(items);
                 displayItems(items);

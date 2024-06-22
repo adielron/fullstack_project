@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Electronic Companies on NASDAQ</title>
+    <link rel="stylesheet" href="./shop.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .search-input {
+            width: 300px;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .search-button {
+            padding: 8px 16px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .stats-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .company-item {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .company-item span {
+            display: inline-block;
+            min-width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <h1>Top 5 Electronic Companies on NASDAQ</h1>
+
+    <div class="form-group">
+        <input type="text" id="stockSymbolInput" class="search-input" placeholder="Enter Stock Symbol...">
+        <button id="searchButton" class="search-button">Search</button>
+    </div>
+
+    <div class="stats-container" id="statsContainer">
+        <!-- Company information will be displayed here -->
+    </div>
+
+    <script>
+        // Function to include HTML file
+        function includeHTML(filePath, targetElement, callback) {
+            fetch(filePath)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load HTML file');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    // Inject HTML content into target element
+                    document.getElementById(targetElement).innerHTML = html;
+                    if (callback) callback();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Call includeHTML function to include navbar.html and then load navbar.js
+        includeHTML('navbar.html', 'navbar', function() {
+            // Load navbar.js after navbar.html is included
+            var script = document.createElement('script');
+            script.src = 'navbar.js';
+            document.body.appendChild(script);
+        });
+
+        // List of top 5 electronic companies on NASDAQ
+        const companies = [
+            { name: 'Apple', symbol: 'AAPL' },
+            { name: 'Intel', symbol: 'INTC' },
+            { name: 'NVIDIA', symbol: 'NVDA' },
+            { name: 'Sony', symbol: 'SONY' },
+            { name: 'HP', symbol: 'HPQ' }
+        ];
+
+        // Function to fetch and display company information
+        async function fetchCompanyInfo(symbol) {
+            const apiKey = 'vypA6Jui4YuNXY7b1_HBRZQTCgab4hBs';
+            const url = `https://api.polygon.io/v1/open-close/${symbol}/2023-06-21?adjusted=true&apiKey=${apiKey}`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Stock not found');
+                }
+                const stockInfo = await response.json();
+
+                return {
+                    symbol: symbol,
+                    close: stockInfo.close,
+                    open: stockInfo.open
+                };
+            } catch (error) {
+                console.error('Error fetching stock information:', error);
+                return null;
+            }
+        }
+
+        // Function to display company information
+        async function displayCompanies() {
+            const statsContainer = document.getElementById('statsContainer');
+            statsContainer.innerHTML = '';
+
+            for (const company of companies) {
+                const companyInfo = await fetchCompanyInfo(company.symbol);
+                if (companyInfo) {
+                    const companyDiv = document.createElement('div');
+                    companyDiv.classList.add('company-item');
+                    companyDiv.innerHTML = `
+                        <span><strong>${company.name} (${company.symbol})</strong></span>
+                        <span>Current Price: $${companyInfo.close.toFixed(2)}</span>
+                        <span>Opening Price: $${companyInfo.open.toFixed(2)}</span>
+                    `;
+                    statsContainer.appendChild(companyDiv);
+                } else {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.classList.add('company-item');
+                    errorDiv.textContent = `Error fetching data for ${company.name} (${company.symbol})`;
+                    statsContainer.appendChild(errorDiv);
+                }
+            }
+        }
+
+        // Function to display a searched stock symbol
+        async function searchStockSymbol(symbol) {
+            const statsContainer = document.getElementById('statsContainer');
+            statsContainer.innerHTML = ''; // Clear existing data
+
+            const companyInfo = await fetchCompanyInfo(symbol);
+            if (companyInfo) {
+                const companyDiv = document.createElement('div');
+                companyDiv.classList.add('company-item');
+                companyDiv.innerHTML = `
+                    <span><strong>${symbol}</strong></span>
+                    <span>Current Price: $${companyInfo.close.toFixed(2)}</span>
+                    <span>Opening Price: $${companyInfo.open.toFixed(2)}</span>
+                `;
+                statsContainer.appendChild(companyDiv);
+            } else {
+                const errorDiv = document.createElement('div');
+                errorDiv.classList.add('company-item');
+                errorDiv.textContent = `Error fetching data for ${symbol}`;
+                statsContainer.appendChild(errorDiv);
+            }
+        }
+
+        // Fetch and display companies when the page loads
+        displayCompanies();
+
+        // Event listener for search button click
+        document.getElementById('searchButton').addEventListener('click', function() {
+            const symbol = document.getElementById('stockSymbolInput').value.trim().toUpperCase();
+            if (symbol) {
+                searchStockSymbol(symbol);
+            } else {
+                alert('Please enter a stock symbol');
+            }
+        });
+    </script>
+</body>
+</html>
