@@ -1,12 +1,16 @@
 const express = require('express');
 const path = require('path');
+const dotenv = require('dotenv');
+
 const app = express();
 const port = 4000;
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 // Routes
+const STOCK_KEY = process.env.STOCK_KEY;
 
 
 app.get('/', (req, res) => {
@@ -43,6 +47,13 @@ app.get('/cart', (req, res) => {
 
 app.get('/api', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'api.html'));
+});
+
+app.get('/config', (req, res) => {
+    console.log("key");
+
+    console.log(STOCK_KEY);
+    res.json({ apiKey: STOCK_KEY });
 });
 
 

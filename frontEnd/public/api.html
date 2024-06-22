@@ -111,9 +111,25 @@
             { name: 'HP', symbol: 'HPQ' }
         ];
 
+        let apiKey;
+
+        // Function to fetch API key from the server
+        async function fetchApiKey() {
+            try {
+                const response = await fetch('/config');
+                const data = await response.json();
+                console.log(response);
+
+                apiKey = data.apiKey;
+                console.log(data);
+
+            } catch (error) {
+                console.error('Error fetching API key:', error);
+            }
+        }
+
         // Function to fetch and display company information
         async function fetchCompanyInfo(symbol) {
-            const apiKey = 'vypA6Jui4YuNXY7b1_HBRZQTCgab4hBs';
             const url = `https://api.polygon.io/v1/open-close/${symbol}/2023-06-21?adjusted=true&apiKey=${apiKey}`;
 
             try {
@@ -182,8 +198,8 @@
             }
         }
 
-        // Fetch and display companies when the page loads
-        displayCompanies();
+        // Fetch API key and display companies when the page loads
+        fetchApiKey().then(displayCompanies);
 
         // Event listener for search button click
         document.getElementById('searchButton').addEventListener('click', function() {

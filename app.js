@@ -98,7 +98,6 @@ app.use('/managers', managersRoutes);
 app.use('/auth', authRouter);
 
 
-
 const password = process.env.MONGODB_PASSWORD;
 const uri = `mongodb+srv://adielron:${password}@cluster0.gfkrzlb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
