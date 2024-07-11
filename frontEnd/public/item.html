@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Item</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        #successMessage {
+            color: green;
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div id="navbar"></div>
@@ -37,8 +43,6 @@
         });
     </script>
 
-
-
     <h1>Create Item</h1>
     <form id="createItemForm">
         <label for="name">Name:</label><br>
@@ -65,50 +69,54 @@
         <label for="quality">Quality:</label><br>
         <input type="text" id="quality" name="quality"><br><br>
 
+        <label for="img">Img:</label><br>
+        <input type="text" id="img" name="img"><br><br>
+
         <input type="submit" value="Submit">
     </form>
 
-
+    <div id="successMessage">Item created successfully!</div>
     <div id="errorMessage" style="color: red; display: none;">
-        Error creating item. Only employees can add items to the store 
+        Error creating item. Only employees can add items to the store.
     </div>
 
     <script>
-$(document).ready(function() {
-    $('#createItemForm').submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission
+        $(document).ready(function() {
+            $('#createItemForm').submit(function(event) {
+                event.preventDefault(); // Prevent the default form submission
 
-        // Serialize the form data
-        var formData = $(this).serialize();
+                // Serialize the form data
+                var formData = $(this).serialize();
 
-        // Send a POST request to the backend
-        $.ajax({
-            type: 'POST',
-            url: 'http://localhost:3000/items',
-            data: formData,
-            contentType: 'application/x-www-form-urlencoded', // Specify the content type
-            xhrFields: {
-                withCredentials: true // Include credentials (cookies)
-            },
-            headers: {
-                'Accept': 'application/json', // Specify the accepted content type
-                'Content-Type': 'application/x-www-form-urlencoded' // Specify the content type
-            },
-            success: function(response) {
-                // Handle the successful response
-                $('#errorMessage').hide();
+                // Send a POST request to the backend
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://localhost:3000/items',
+                    data: formData,
+                    contentType: 'application/x-www-form-urlencoded', // Specify the content type
+                    xhrFields: {
+                        withCredentials: true // Include credentials (cookies)
+                    },
+                    headers: {
+                        'Accept': 'application/json', // Specify the accepted content type
+                        'Content-Type': 'application/x-www-form-urlencoded' // Specify the content type
+                    },
+                    success: function(response) {
+                        // Handle the successful response
+                        $('#errorMessage').hide();
+                        $('#successMessage').show().delay(3000).fadeOut(); // Show success message
+                        $('#createItemForm')[0].reset(); // Clear the form
 
-                console.log('Item created successfully:', response);
-            },
-            error: function(xhr, status, error) {
-                // Handle errors
-                console.error('Only employees can add items to the store ', error);
-                $('#errorMessage').show();
-
-            }
+                        console.log('Item created successfully:', response);
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle errors
+                        console.error('Only employees can add items to the store', error);
+                        $('#errorMessage').show();
+                    }
+                });
+            });
         });
-    });
-});
     </script>
 </body>
 </html>

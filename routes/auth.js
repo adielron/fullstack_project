@@ -99,18 +99,19 @@ router.get('/status', (req, res) => {
 
 
 
-
-
 router.post('/login', passport.authenticate('local'), (req, res) => {
+    console.log("logging in ");
     res.status(200).json({ message: 'Login successful' });
 });
 
-router.post('/logout', function(req, res, next) {
-    req.logout(function(err) {
-      if (err) { return next(err); }
-      res.status(200).json({ message: 'Logout successful' });
-      //   res.redirect('/');
-    });
-  });
+router.get('/logout', function(req, res, next) {
+    console.log("Logging out");
+    req.logout(); // Passport's logout function
+    console.log(" out");
+    res.redirect('/');
+
+
+    // After logout, redirect to the home page
+});
 
 module.exports = router;
