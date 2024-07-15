@@ -62,12 +62,16 @@
       import { loadCartItems } from "./itemDisplayModule.js";
       
       // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update cart item count
-      loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", displayCartItemCount);    
+      loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", displayCartItemCount);
 
+      // Add listener events for cart loading and updating
       document.addEventListener("DOMContentLoaded", () => {        
         loadCartItems();        
         setupPurchaseAllButton();
-    });
+    });      
+      document.addEventListener('itemRemoved', loadCartItems);
+      document.addEventListener('cartReset', loadCartItems);
+      
     </script>
   </body>
 </html>

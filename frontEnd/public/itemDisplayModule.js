@@ -60,7 +60,7 @@ export async function displayItems(items, container, callbackFunc) {
 }
 
 // Load cart items
-export async function loadCartItems() {
+export function loadCartItems() {
     const cartItems = getCart();
     const cartItemsContainer = document.getElementById('cartItems');
     cartItemsContainer.innerHTML = '';
@@ -70,11 +70,6 @@ export async function loadCartItems() {
         noItemsMessage.textContent = 'Your cart is empty.';
         cartItemsContainer.appendChild(noItemsMessage);
     } else {        
-        displayItems(cartItems,cartItemsContainer,removeItemFromCart);     
-    }    
-}
-
-export function removeItemFromCart(item){
-    removeFromCart(item);
-    loadCartItems();
+        displayItems(cartItems,cartItemsContainer,removeFromCart);     
+    }
 }

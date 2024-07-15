@@ -24,11 +24,19 @@ export function addToCart(item) {
 // Remove an item from the cart
 export function removeFromCart(itemToRemove) {
     let cart = getCart();    
-    cart = cart.filter(item => item.name !== itemToRemove.name);    
-    localStorage.setItem('cart', JSON.stringify(cart));    
-    decrementCartItemCount();    
-    console.log('Item removed from cart:', item);
-    console.log('Cart:', cart);   
+    // Find the index of the first instance of the item to remove
+    const itemIndex = cart.findIndex(item => item.name === itemToRemove.name);    
+    if (itemIndex !== -1) {
+        // Remove the first instance of the item
+        cart.splice(itemIndex, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        decrementCartItemCount();
+        console.log('Item removed from cart:', itemToRemove);
+        console.log('Cart:', cart);
+        // Dispatch a custom event for item removal
+        const event = new CustomEvent('itemRemoved');
+        document.dispatchEvent(event);
+    }   
 }
 
 // Increment cart item count
@@ -62,6 +70,9 @@ export function resetCart() {
     console.log("Cart reset");
     resetCartItemCount();
     displayCartItemCount();
+    // Dispatch a custom event for cart reset
+    const event = new CustomEvent('cartReset');
+    document.dispatchEvent(event);
 }
 
 // Display cart item count
@@ -127,7 +138,6 @@ function purchaseAllItems() {
 
                 // Reset cart and reload
                 resetCart();
-                loadCartItems();
             }
         })
         .catch((error) => {
@@ -136,6 +146,5 @@ function purchaseAllItems() {
     });
 
           // Reset cart and reload
-          resetCart();
-          loadCartItems();
+          resetCart();          
 }
