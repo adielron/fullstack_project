@@ -7,11 +7,10 @@
     <title>Navbar</title>
     <!-- Link to navbar.css -->
     <link rel="stylesheet" href="./navbar.css">
-    <script type="module">
+    <script type="module">        
         import { displayCartItemCount } from './cartModule.js';
-        document.addEventListener("DOMContentLoaded", () => {displayCartItemCount();
-});              
-</script>
+        displayCartItemCount();
+    </script>    
 </head>
 <body>
 
@@ -66,7 +65,7 @@
         <a href="/search_advanced.html" class="advanced-search-button" aria-label="Advanced Search">
             <img src="/icons/searchAdv.png" alt="SearchAdv">
         </a>               
-    </form>   
+    </form>      
 </div>
 </body>
 </html>

@@ -4,12 +4,23 @@
     <link rel="icon" type="image/png" href="/icons/logo.png" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://d3js.org/d3.v6.min.js"></script>
-    <script type="module">
-      import { loadHTMLWithScript } from "./HTMLLoader.js";
-      // Call loadHTMLWithScript function to include navbar.html and then load navbar.js
-      loadHTMLWithScript("navbar.html", "navbar", "navbar.js");
+    <script type="module">    
+      import { loadHTMLWithScriptAndCallback } from './HTMLLoader.js';
+      import { displayCartItemCount } from './cartModule.js';    
+      import { fetchItems } from "./statisticsModule.js";
+      
+      // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update cart item count
+      loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", displayCartItemCount);
+
+      // Event listener for search button click
+      document
+        .getElementById("searchButton")
+        .addEventListener("click", function () {
+          const groupByOption = document.getElementById("groupByOption").value;
+          fetchItems(groupByOption);
+        });
     </script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>      
     <title>Show statistics</title>
     <style>
       body {
@@ -63,18 +74,6 @@
     <div id="graph1" style="width: 600px; height: 400px"></div>
 
     <h2>Country of Origin Distribution</h2>
-    <div id="graph2" style="width: 600px; height: 400px"></div>
-
-    <script type="module">
-      import { fetchItems } from "./statisticsModule.js";
-
-      // Event listener for search button click
-      document
-        .getElementById("searchButton")
-        .addEventListener("click", function () {
-          const groupByOption = document.getElementById("groupByOption").value;
-          fetchItems(groupByOption);
-        });
-    </script>
+    <div id="graph2" style="width: 600px; height: 400px"></div>    
   </body>
 </html>

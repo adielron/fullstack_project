@@ -36,8 +36,9 @@
       import { fetchItems } from "./itemDisplayModule.js";
       import { isCartEmpty, incrementCartItemCount, resetCartItemCount, displayCartItemCount } from './cartModule.js';
 
-      // Call loadHTMLWithScripAndCallback function to include navbar.html and then load navbar.js
-      loadHTMLWithScriptAndCallback("navbar.html","navbar","navbar.js",fetchItems);
+      // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update cart item count
+      loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", displayCartItemCount);
+      fetchItems();
 
       let cart = getCart();
       if (isCartEmpty()) {

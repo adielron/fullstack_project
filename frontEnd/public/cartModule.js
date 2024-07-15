@@ -69,7 +69,12 @@ export function displayCartItemCount() {
     let cartItemCount = localStorage.getItem("cartItemCount") ? parseInt(localStorage.getItem("cartItemCount")) : 0;
     const cartItemCountDisplay = document.getElementById("cartItemCount");
     if (cartItemCountDisplay) {
-        cartItemCountDisplay.textContent = cartItemCount;
+        if (cartItemCount > 0) {
+            cartItemCountDisplay.textContent = cartItemCount;
+            cartItemCountDisplay.style.display = "inline";
+        } else {
+            cartItemCountDisplay.style.display = "none";
+        }
     }
 }
 

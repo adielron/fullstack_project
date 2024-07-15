@@ -6,12 +6,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <script type="module">
-        import { loadHTMLWithScript } from "./HTMLLoader.js"; 
+        import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js"; 
         import { displaySearchResults } from "./searchModule.js";
-        import { addToCart } from "./cartModule.js";       
+        import { addToCart, displayCartItemCount } from "./cartModule.js";       
   
-        // Call loadHTMLWithScripAndCallback function to include navbar.html and then load navbar.js
-        loadHTMLWithScript("navbar.html", "navbar", "navbar.js");         
+        // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update cart item count
+        loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", displayCartItemCount);
+    </script>         
         
     </script>
     <title>Search results</title>
