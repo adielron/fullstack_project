@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./shop.css" />
+    <link rel="icon" type="image/png" href="/icons/logo.png" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AREA</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+  </head>
+  <body>
+    <div id="navbar"></div>
+    <div id="authStatus"></div>
+
+    <h1>Shop</h1>
+
+    <div class="item-container" id="itemContainer"></div>
+
+    <!-- Containers for the graphs -->
+
+    <style>
+      .bar {
+        fill: steelblue;
+      }
+      .bar:hover {
+        fill: orange;
+      }
+      .label {
+        font-size: 12px;
+        fill: black;
+        text-anchor: middle;
+      }
+    </style>
+    <script type="module">
+      import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
+      import { fetchItems } from "./itemDisplayModule.js";
+      import { isCartEmpty, incrementCartItemCount, resetCartItemCount, displayCartItemCount } from './cartModule.js';
+
+      // Call loadHTMLWithScripAndCallback function to include navbar.html and then load navbar.js
+      loadHTMLWithScriptAndCallback("navbar.html","navbar","navbar.js",fetchItems);
+
+      let cart = getCart();
+      if (isCartEmpty()) {
+        resetCartItemCount();
+        }  
+      let cartItemCount = localStorage.getItem("cartItemCount") ? parseInt(localStorage.getItem("cartItemCount")) : 0;
+       
+      document.addEventListener("DOMContentLoaded", displayCartItemCount);    
+    
+    </script>    
+  </body>
+</html>

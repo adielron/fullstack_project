@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>    
+    <link rel="stylesheet" href="./shop.css">
+    <link rel="stylesheet" href="./styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <script type="module">
+        import { loadHTMLWithScript } from "./HTMLLoader.js"; 
+        import { displaySearchResults } from "./searchModule.js";
+        import { addToCart } from "./cartModule.js";       
+  
+        // Call loadHTMLWithScripAndCallback function to include navbar.html and then load navbar.js
+        loadHTMLWithScript("navbar.html", "navbar", "navbar.js");         
+        
+    </script>
+    <title>Search results</title>
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <h1>Search results</h1>
+
+    <div class="item-container" id="itemContainer">  </div>
+        <!-- Item list will be dynamically populated here -->
+    </div>    
+</body>
+</html>
