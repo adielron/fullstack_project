@@ -3,29 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/icons/logo.png">
     <title>Navbar</title>
     <!-- Link to navbar.css -->
     <link rel="stylesheet" href="./navbar.css">
+    <script type="module">
+        import { displayCartItemCount } from './cartModule.js';
+        document.addEventListener("DOMContentLoaded", () => {displayCartItemCount();
+});              
+</script>
 </head>
 <body>
 
-<!-- Navbar content -->
+<!-- Navigation bar content -->
 <nav>
-    <ul>
-        <li id="authStatus"></li>
-        <li><a href="/shop">Shop</a></li>
-        <li><a href="/item">Items</a></li>
-        <li><a href="/maps">Maps</a></li>
-        <li><a href="/GroupBy">GroupBy</a></li>
-        <li><a href="/search">search</a></li>
-        <li><a href="/search_c">search_criteria</a></li>
-        <li><a href="/api">api</a></li>
-
-        <li><a href="/cart">cart</a></li>
-
-
+    <li class="nav-logo">
+        <a href="http://localhost:4000">
+            <img src="/icons/logo.png" alt="Home">
+            AREA
+        </a>
+    </li>
+    <ul>        
+        <li id="authStatus"></li>        
+        <li><a href="/item">
+            <img src="/icons/items.png" alt="Items">
+            Items
+        </a></li>        
+        <li><a href="/statistics">
+            <img src="/icons/group.png" alt="Statistics">
+            Statistics
+        </a></li>       
+        
+        <li><a href="/api">
+            <img src="/icons/api.png" alt="API">
+            API
+        </a></li>
+        <li><a href="/about">
+            <img src="/icons/about.png" alt="About">
+            About
+        </a></li>
+        <li><a href="/branches">
+            <img src="/icons/branches.png" alt="Branches">
+            Branches
+        </a></li>
+        <li><a href="/login" id="loginBtn">
+            <img src="/icons/login.png" alt="Login">
+            Login
+        </a></li>
+        <li><a href="/cart">
+            <img src="/icons/cart.png" alt="Cart">
+            Cart
+        </a></li>
+        <li><span class="cartItemCountDisplay" id="cartItemCount"></span></li>
     </ul>
 </nav>
-
+<div role="search" aria-label="Site Search">
+    <form method="get" action="search_results.html" class="search-bar" id="searchForm">
+        <input type="text" name="query" placeholder="Search..." aria-label="Search Input" class="searchInput" id="searchInput">
+        <button type="submit" aria-label="Submit Search" class="searchButton">
+            <img src="/icons/search.png" alt="Search">
+        </button>         
+        <a href="/search_advanced.html" class="advanced-search-button" aria-label="Advanced Search">
+            <img src="/icons/searchAdv.png" alt="SearchAdv">
+        </a>               
+    </form>   
+</div>
 </body>
 </html>

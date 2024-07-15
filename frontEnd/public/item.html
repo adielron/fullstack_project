@@ -1,78 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/png" href="/icons/logo.png">
+    <link rel="stylesheet" href="./styles.css">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Item</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        #successMessage {
-            color: green;
-            display: none;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>   
+    <script type="module">
+        import { loadHTMLWithScript } from './HTMLLoader.js';        
+            // Call loadHTMLWithScript function to include navbar.html and then load navbar.js
+            loadHTMLWithScript('navbar.html', 'navbar', 'navbar.js');
+    </script>  
+    <title>Manage Items</title>
 </head>
 <body>
-    <div id="navbar"></div>
-    <script>
-        // Function to include HTML file
-        function includeHTML(filePath, targetElement, callback) {
-            fetch(filePath)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to load HTML file');
-                    }
-                    return response.text();
-                })
-                .then(html => {
-                    // Inject HTML content into target element
-                    document.getElementById(targetElement).innerHTML = html;
-                    if (callback) callback();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
+    <div id="navbar"></div>  
+    <form id="createItemForm" class="AREAForm">
+        <h2>Create Item</h2>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
 
-        // Call includeHTML function to include navbar.html and then load navbar.js
-        includeHTML('navbar.html', 'navbar', function() {
-            // Load navbar.js after navbar.html is included
-            var script = document.createElement('script');
-            script.src = 'navbar.js';
-            document.body.appendChild(script);
-        });
-    </script>
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="4" required></textarea>
 
-    <h1>Create Item</h1>
-    <form id="createItemForm">
-        <label for="name">Name:</label><br>
-        <input type="text" id="name" name="name" required><br><br>
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" min="0" step="0.01" required>
 
-        <label for="description">Description:</label><br>
-        <textarea id="description" name="description" rows="4" required></textarea><br><br>
+        <label for="weight">Weight:</label>
+        <input type="text" id="weight" name="weight">
 
-        <label for="price">Price:</label><br>
-        <input type="number" id="price" name="price" min="0" step="0.01" required><br><br>
+        <label for="madeIn">Made In:</label>
+        <input type="text" id="madeIn" name="madeIn">
 
-        <label for="weight">Weight:</label><br>
-        <input type="text" id="weight" name="weight"><br><br>
+        <label for="color">Color:</label>
+        <input type="text" id="color" name="color">
 
-        <label for="madeIn">Made In:</label><br>
-        <input type="text" id="madeIn" name="madeIn"><br><br>
+        <label for="distributor">Distributor:</label>
+        <input type="text" id="distributor" name="distributor">
 
-        <label for="color">Color:</label><br>
-        <input type="text" id="color" name="color"><br><br>
+        <label for="quality">Quality:</label>
+        <input type="text" id="quality" name="quality">
 
-        <label for="distributor">Distributor:</label><br>
-        <input type="text" id="distributor" name="distributor"><br><br>
+        <label for="img">Image link:</label>
+        <input type="text" id="img" name="img">
 
-        <label for="quality">Quality:</label><br>
-        <input type="text" id="quality" name="quality"><br><br>
-
-        <label for="img">Img:</label><br>
-        <input type="text" id="img" name="img"><br><br>
-
-        <input type="submit" value="Submit">
+        <button type="submit" value="Submit">Submit</button>
     </form>
 
     <div id="successMessage">Item created successfully!</div>

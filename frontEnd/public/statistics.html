@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="icon" type="image/png" href="/icons/logo.png" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script type="module">
+      import { loadHTMLWithScript } from "./HTMLLoader.js";
+      // Call loadHTMLWithScript function to include navbar.html and then load navbar.js
+      loadHTMLWithScript("navbar.html", "navbar", "navbar.js");
+    </script>
+    <title>Show statistics</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      h1 {
+        text-align: center;
+      }
+      .item {
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+      .search-button {
+        padding: 8px 16px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="navbar"></div>
+
+    <h1>Show statistics</h1>
+
+    <!-- Dropdown for group by option -->
+    <select id="groupByOption">
+      <option value="name">Name</option>
+      <option value="madeIn">Made In</option>
+      <option value="color">Color</option>
+      <option value="distributor">Distributor</option>
+      <option value="quality">Quality</option>
+    </select>
+
+    <!-- Search button -->
+    <button id="searchButton" class="search-button">Search</button>
+
+    <div id="itemList">
+      <!-- Item list will be dynamically populated here -->
+    </div>
+
+    <h2>Item Prices</h2>
+    <div id="graph1" style="width: 600px; height: 400px"></div>
+
+    <h2>Country of Origin Distribution</h2>
+    <div id="graph2" style="width: 600px; height: 400px"></div>
+
+    <script type="module">
+      import { fetchItems } from "./statisticsModule.js";
+
+      // Event listener for search button click
+      document
+        .getElementById("searchButton")
+        .addEventListener("click", function () {
+          const groupByOption = document.getElementById("groupByOption").value;
+          fetchItems(groupByOption);
+        });
+    </script>
+  </body>
+</html>

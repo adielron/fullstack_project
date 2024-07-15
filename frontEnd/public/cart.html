@@ -1,206 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart</title>
+  <head>
+    <link rel="icon" type="image/png" href="/icons/logo.png" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h1 {
-            text-align: center;
-        }
-        .item {
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-        .item img {
-            max-width: 100px;
-            max-height: 100px;
-            display: block;
-            margin: 0 auto 10px;
-        }
-        .item h3 {
-            text-align: center;
-        }
-        .item p {
-            margin-bottom: 5px;
-        }
-        .item button {
-            display: block;
-            margin: 10px auto 0;
-            padding: 8px 16px;
-            font-size: 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      h1 {
+        text-align: center;
+      }
+      .item {
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+      .item img {
+        max-width: 100px;
+        max-height: 100px;
+        display: block;
+        margin: 0 auto 10px;
+      }
+      .item h3 {
+        text-align: center;
+      }
+      .item p {
+        margin-bottom: 5px;
+      }
+      .item button {
+        display: block;
+        margin: 10px auto 0;
+        padding: 8px 16px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
     </style>
-</head>
-<body>
+    <title>Shopping Cart</title>
+  </head>
+  <body>
     <div id="navbar"></div>
     <div id="cartContainer">
-        <h1>Your Shopping Cart</h1>
-        <div id="cartItems"></div>
-        <div id="cartControls">
-            <button id="purchaseAllButton" class="purchase-button">Purchase All</button>
-        </div>
+      <h1>Your Shopping Cart</h1>
+      <div id="cartItems"></div>
+      <div id="cartControls">
+        <button id="purchaseAllButton" class="purchase-button">
+          Purchase All
+        </button>
+      </div>
     </div>
+    <script type="module">
+      import { loadHTMLWithScript } from "./HTMLLoader.js";
+      import { resetCart, setupPurchaseAllButton } from "./cartModule.js";
+      import { loadCartItems } from "./itemDisplayModule.js";
 
-    <script>
-        // Function to include HTML file
-        function includeHTML(filePath, targetElement, callback) {
-            fetch(filePath)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to load HTML file');
-                    }
-                    return response.text();
-                })
-                .then(html => {
-                    // Inject HTML content into target element
-                    document.getElementById(targetElement).innerHTML = html;
-                    if (callback) callback();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
+      // Call loadHTMLWithScripAndCallback function to include navbar.html and then load navbar.js
+      loadHTMLWithScript("navbar.html", "navbar", "navbar.js");      
 
-        // Call includeHTML function to include navbar.html and then load navbar.js
-        includeHTML('navbar.html', 'navbar', function() {
-            // Load navbar.js after navbar.html is included
-            var script = document.createElement('script');
-            script.src = 'navbar.js';
-            document.body.appendChild(script);
-
-            // Load cart items from local storage and display
-            loadCartItems();
-        });
-
-        function loadCartItems() {
-            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-
-            const cartItemsContainer = document.getElementById('cartItems');
-            cartItemsContainer.innerHTML = '';
-
-            if (cartItems.length === 0) {
-                const noItemsMessage = document.createElement('p');
-                noItemsMessage.textContent = 'Your cart is empty.';
-                cartItemsContainer.appendChild(noItemsMessage);
-            } else {
-                displayItems(cartItems, cartItemsContainer);
-            }
-        }
-
-        function displayItems(items, container) {
-            items.forEach(item => {
-                const itemDiv = document.createElement('div');
-                itemDiv.classList.add('item');
-
-                const img = document.createElement('img');
-                img.src = item.img;
-                img.alt = item.name;
-
-                const name = document.createElement('h3');
-                name.textContent = item.name;
-
-                const description = document.createElement('p');
-                description.textContent = item.description;
-
-                const price = document.createElement('p');
-                price.textContent = 'Price: $' + item.price;
-
-                const country = document.createElement('p');
-                country.textContent = 'Country: ' + item.madeIn;
-
-                const button = document.createElement('button');
-                button.textContent = 'Remove from Cart';
-                button.addEventListener('click', () => removeFromCart(item)); // Add click event listener
-
-                itemDiv.appendChild(img);
-                itemDiv.appendChild(name);
-                itemDiv.appendChild(description);
-                itemDiv.appendChild(price);
-                itemDiv.appendChild(country);
-                itemDiv.appendChild(button);
-
-                container.appendChild(itemDiv);
-            });
-        }
-
-        function removeFromCart(itemToRemove) {
-            // Retrieve cart items from local storage
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-            // Filter out the item to be removed
-            cart = cart.filter(item => item.name !== itemToRemove.name);
-
-            // Update local storage with updated cart items
-            localStorage.setItem('cart', JSON.stringify(cart));
-
-            // Reload cart items display
-            loadCartItems();
-        }
-
-        const purchaseAllButton = document.getElementById('purchaseAllButton');
-        purchaseAllButton.addEventListener('click', () => {
-
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-cart.forEach((item,index) => {
-    // Replace 'localhost:3000' with your actual backend endpoint
-    const storedUser = localStorage.getItem('isAuthenticated');
-
-
-    fetch('http://localhost:3000/purchases', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            customerId: storedUser, // Replace with actual user ID from session or localStorage
-            itemId: item._id
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to purchase item');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Item purchased successfully:', data);
-
-     // Check if it's the last item to display the thank you message
-     if (index === cart.length - 1) {
-            const thankYouMessage = document.createElement('p');
-            thankYouMessage.textContent = 'Thank you for your purchase!';
-            thankYouMessage.style.color = 'green';
-            document.body.appendChild(thankYouMessage);
-
-            // Clear cart items from local storage and reload cart display after clearing
-            localStorage.removeItem('cart');
-            loadCartItems(); // Assuming loadCartItems() reloads the cart display
-        }
-
-    })
-    .catch(error => {
-        console.error('Error purchasing item:', error);
+      document.addEventListener("DOMContentLoaded", () => {        
+        loadCartItems();        
+        setupPurchaseAllButton();
     });
-});
-
-            localStorage.removeItem('cart'); // Clear cart items from local storage
-            loadCartItems(); // Reload cart display after clearing
-        });
-
     </script>
-</body>
+  </body>
 </html>

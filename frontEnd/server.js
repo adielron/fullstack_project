@@ -14,39 +14,39 @@ const STOCK_KEY = process.env.STOCK_KEY;
 
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'login.html'));
-});
-
-app.get('/shop', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'shop.html'));
 });
 
-app.get('/item', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'item.html'));
+app.get('/about', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'about.html'));
 });
 
-app.get('/maps', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'maps.html'));
+app.get('/api', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'api.html'));
 });
 
-app.get('/groupBy', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'groupBy.html'));
-});
-
-app.get('/search', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'search.html'));
-});
-
-app.get('/search_c', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'search_c.html'));
+app.get('/branches', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'branches.html'));
 });
 
 app.get('/cart', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'cart.html'));
 });
 
-app.get('/api', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'api.html'));
+app.get('/item', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'item.html'));
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+app.get('/search_advanced', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'search_advanced.html'));
+});
+
+app.get('/statistics', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'statistics.html'));
 });
 
 app.get('/config', (req, res) => {

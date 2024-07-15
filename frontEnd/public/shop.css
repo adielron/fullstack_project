@@ -1,6 +1,7 @@
 .item-container {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 20px;
 }
 
@@ -10,6 +11,9 @@
     padding: 20px;
     width: 200px;
     text-align: center;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
 }
 
 .item img {
@@ -33,4 +37,5 @@
     border-radius: 5px;
     padding: 10px 20px;
     cursor: pointer;
+    margin-top: auto; /* This pushes the button to the bottom */
 }

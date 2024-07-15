@@ -93,4 +93,4 @@ function addLogoutListener() {
 // Call the function to include the navbar content when the page loads
 window.onload = function() {
     includeNavbar();
-};
+};        
