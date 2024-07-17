@@ -1,5 +1,7 @@
 // Module for cart management
 
+import { checkAuthentication } from './authenticationModule.js';
+
 // Get cart items
 export function getCart() {
     return JSON.parse(localStorage.getItem('cart')) || [];
@@ -77,6 +79,7 @@ export function resetCart() {
 
 // Display cart item count
 export function displayCartItemCount() {
+    checkAuthentication();
     let cartItemCount = localStorage.getItem("cartItemCount") ? parseInt(localStorage.getItem("cartItemCount")) : 0;
     const cartItemCountDisplay = document.getElementById("cartItemCount");
     if (cartItemCountDisplay) {

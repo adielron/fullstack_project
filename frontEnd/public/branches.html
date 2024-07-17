@@ -4,14 +4,8 @@
     <link rel="stylesheet" href="./shop.css">
     <link rel="icon" type="image/png" href="/icons/logo.png">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
-    <script src="https://www.bing.com/api/maps/mapcontrol?key=ApsBmst2FQ5jNlB3rU2ru-aDMWpo1s6ydhgmVhIoqgUqxlJcnbEZGJ_EY9V6-De4" async defer></script>    
-    <script type="module">    
-        import { loadHTMLWithScriptAndCallback } from './HTMLLoader.js';
-        import { displayCartItemCount } from './cartModule.js';    
-        // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update cart item count
-        loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", displayCartItemCount);
-    </script>  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">         
+    <script src="https://www.bing.com/api/maps/mapcontrol?key=ApsBmst2FQ5jNlB3rU2ru-aDMWpo1s6ydhgmVhIoqgUqxlJcnbEZGJ_EY9V6-De4" async defer></script>
     <script src="branches.js"></script>
     <style>
         #map {
@@ -23,6 +17,12 @@
 </head>
 <body>
     <div id="navbar"></div>
-    <div id="map"></div>       
+    <div id="map"></div>    
+    <script type="module">
+        import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
+        import { updateNavbarDisplay } from './navbar.js'; 
+        // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
+        loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);    
+    </script>    
 </body>
 </html>

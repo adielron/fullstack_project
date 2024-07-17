@@ -4,15 +4,16 @@
     <link rel="icon" type="image/png" href="/icons/logo.png" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script type="module">    
-      import { loadHTMLWithScriptAndCallback } from './HTMLLoader.js';
-      import { displayCartItemCount } from './cartModule.js';    
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script type="module">
+      import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
+      import { displayCartItemCount } from "./cartModule.js";
       import { fetchItems } from "./statisticsModule.js";
-      
-      // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update cart item count
-      loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", displayCartItemCount);
 
-      // Event listener for search button click
+      // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update cart item count
+      loadHTMLWithScriptAndCallback("navbar.html","navbar","navbar.js",displayCartItemCount);
+
+      // Add event listeners
       document
         .getElementById("searchButton")
         .addEventListener("click", function () {
@@ -20,7 +21,6 @@
           fetchItems(groupByOption);
         });
     </script>
-    <script src="https://d3js.org/d3.v6.min.js"></script>      
     <title>Show statistics</title>
     <style>
       body {
@@ -70,10 +70,10 @@
       <!-- Item list will be dynamically populated here -->
     </div>
 
-    <h2>Item Prices</h2>
+    <h2>Bar Chart</h2>
     <div id="graph1" style="width: 600px; height: 400px"></div>
 
-    <h2>Country of Origin Distribution</h2>
-    <div id="graph2" style="width: 600px; height: 400px"></div>    
+    <h2>Pie Chart</h2>
+    <div id="graph2" style="width: 600px; height: 400px"></div>
   </body>
 </html>

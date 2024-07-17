@@ -57,12 +57,16 @@
       </div>
     </div>
     <script type="module">
-      import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
-      import { resetCart, setupPurchaseAllButton, displayCartItemCount } from "./cartModule.js";
-      import { loadCartItems } from "./itemDisplayModule.js";
       
-      // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update cart item count
-      loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", displayCartItemCount);
+    </script> 
+    <script type="module"> 
+      import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
+      import { updateNavbarDisplay } from './navbar.js';
+      import { loadCartItems } from "./itemDisplayModule.js";
+      import { resetCart, setupPurchaseAllButton, displayCartItemCount } from "./cartModule.js";
+      
+      // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
+      loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);    
 
       // Add listener events for cart loading and updating
       document.addEventListener("DOMContentLoaded", () => {        

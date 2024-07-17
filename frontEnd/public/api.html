@@ -5,11 +5,11 @@
     <link rel="icon" type="image/png" href="/icons/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">    
-    <script type="module">    
-        import { loadHTMLWithScriptAndCallback } from './HTMLLoader.js';
-        import { displayCartItemCount } from './cartModule.js';    
-        // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update cart item count
-        loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", displayCartItemCount);
+    <script type="module">
+        import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
+        import { updateNavbarDisplay } from './navbar.js'; 
+        // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
+        loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);    
     </script>    
     <title>Top Electronic Companies on NASDAQ</title>   
     <style>

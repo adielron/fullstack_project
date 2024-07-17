@@ -7,11 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script type="module">
       import { loadHTMLWithScriptAndCallback } from './HTMLLoader.js';
-      import { addToCart, displayCartItemCount } from './cartModule.js';
+      import { updateNavbarDisplay } from './navbar.js';
+      import { addToCart } from './cartModule.js';
       import { fetchSelectableOptions } from './searchModule.js';
 
       // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update cart item count
-      loadHTMLWithScriptAndCallback("navbar.html","navbar","navbar.js",displayCartItemCount);
+      loadHTMLWithScriptAndCallback("navbar.html","navbar","navbar.js", updateNavbarDisplay);
       
       // Populate selectable options
       fetchSelectableOptions(

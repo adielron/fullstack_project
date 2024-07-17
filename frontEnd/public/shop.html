@@ -33,21 +33,12 @@
     </style>
     <script type="module">
       import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
-      import { fetchItems } from "./itemDisplayModule.js";
-      import { isCartEmpty, incrementCartItemCount, resetCartItemCount, displayCartItemCount } from './cartModule.js';
-
-      // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update cart item count
-      loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", displayCartItemCount);
+      import { updateNavbarDisplay } from './navbar.js';
+      import { fetchItems } from "./itemDisplayModule.js";      
+      
+      // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
+      loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);
       fetchItems();
-
-      let cart = getCart();
-      if (isCartEmpty()) {
-        resetCartItemCount();
-        }  
-      let cartItemCount = localStorage.getItem("cartItemCount") ? parseInt(localStorage.getItem("cartItemCount")) : 0;
-       
-      document.addEventListener("DOMContentLoaded", displayCartItemCount);    
-    
     </script>    
   </body>
 </html>
