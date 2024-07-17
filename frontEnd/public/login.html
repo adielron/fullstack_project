@@ -18,77 +18,44 @@
 
   <div id="navbar"></div>  
 
-<form id="loginForm" class="AREAForm">
-  <h2>Login to AREA:</h2>
-  <label for="name">Username:</label>
-  <input type="text" id="name" name="name">
-  <label for="email">Email:</label>
-  <input type="email" id="email" name="email" required>
-  <label for="password">Password:</label>
-  <input type="password" id="password" name="password" required>
-  <label for="phone">Phone number:</label>
-  <input type="text" id="phone" name="phone">
-  <label for="address">Address:</label>
-  <input type="text" id="address" name="address">
-  <label for="role">Role:</label>
-  <select id="role" name="role">
-    <option value="customer">Customer</option>
-    <option value="worker">Worker</option>
-    <option value="manager">Manager</option>
-  </select><br><br>
-  <button type="submit">Log in</button>
+  <form id="loginForm" class="AREAForm">
+    <h2>Login to AREA:</h2>
+    <label for="name">Username:</label>
+    <input type="text" id="name" name="name" required>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <button type="submit">Login</button>
+    <a href="/register.html">New user? Join us here!</a>    
 </form>
+<p id="errorMessage">Invalid username and/or password. Please try again.</p>
 
-<script>
+<script type="module">
+import { loginUser } from './authenticationModule.js';
+
+// Perform login based on credentials and authentication
 $(document).ready(function() {
-  $('#loginForm').submit(function(event) {
-    event.preventDefault();
+    $('#loginForm').submit(function(event) {
+        event.preventDefault();
 
-    var formData = {
-      username: $('#name').val(),
-      email: $('#email').val(),
-      password: $('#password').val(),
-      phone: $('#phone').val(),
-      address: $('#address').val(),
-      role: $('#role').val()
-    };
+        var formData = {
+            username: $('#name').val(),
+            email: $('#email').val(),
+            password: $('#password').val()
+        };
 
-    var url = '';
-    if (formData.role === 'customer') {
-      url = 'http://localhost:3000/auth/register/other';
-    } else if (formData.role === 'worker') {
-      url = 'http://localhost:3000/auth/register/other';
-    } else if (formData.role === 'manager') {
-      url = 'http://localhost:3000/auth/register/manager';
-    }
-
-    $.ajax({
-      type: 'POST',
-      url: url,
-      data: JSON.stringify(formData),
-      contentType: 'application/json',
-      success: function(response) {
-        console.log(response);
-        console.log("weird");
-
-        // Handle success response
-        window.location.href = '/item'; // Redirect to '/item' on success
-
-      },
-      error: function(xhr, status, error) {
-        console.error(error);
-        // Handle error
-      },
-      xhrFields: {
-        withCredentials: true
-      },
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
+        // Perform login and return person to the previous page
+        loginUser(formData)
+            .then(() => {
+                console.log('Login successful');                
+                window.location.href = document.referrer;
+            })
+            .catch(error => {
+                console.error('Error during login:', error);
+                $('#errorMessage').show();                                    
+            });
     });
-  });
 });
 </script>
 

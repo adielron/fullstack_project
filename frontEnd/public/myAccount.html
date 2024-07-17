@@ -8,9 +8,11 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  
   <script type="module">
     import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
-    import { updateNavbarDisplay } from './navbar.js'; 
+    import { updateNavbarDisplay } from './navbar.js';
+    import { fetchAccountDetails, fetchPurchaseHistory } from './authenticationModule.js';
     // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
-    loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);    
+    loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);
+    fetchAccountDetails();     
   </script>     
   <title>About AREA</title>
 </head>
@@ -18,14 +20,14 @@
 
   <div id="navbar"></div>  
 
-<form id="about" class="AREAForm">
-  <h2>About AREA:</h2>
-  <h3>The project was made by:</h3>  
-  <label>Adi Elron</label>
-  <label>Raz Diamond</label>
-  <label>Elor Itzkovitz</label>
-  <label>Adi Cahli</label>  
+<form id="myProfile" class="AREAForm">
+  <h2>My profile:</h2>   
+  <label id="userNameLabel"></label>
+  <label id="userRoleLabel"></label>  
 </form>
-
+<form id="purchaseHistory" class="AREAForm">  
+  <h2>My purchase history:</h2>
+  <div id="purchaseHistoryContainer"></div>
+</form>
 </body>
 </html>

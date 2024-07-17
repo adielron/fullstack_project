@@ -12,47 +12,122 @@ export function checkAuthentication() {
             'Accept': 'application/json'
         }
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to check authentication status');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Authentication status:', data);
-
-        // Update the navbar based on the authentication status
-        var authStatusElement = document.getElementById('authStatus');
-        var itemsLink = document.getElementById('itemsLink');
-        var statisticsLink = document.getElementById('statisticsLink');
-
-        if (authStatusElement) {
-            if (data.isAuthenticated) {
-                console.log('User is authenticated');
-                localStorage.setItem('isAuthenticated', data.user._id);
-                localStorage.setItem('userRole', data.user.role);
-                authStatusElement.innerHTML = '<a id="managerLink" href="/myAccount.html"><img src="/icons/login.png" alt="MyAccount"><b>My account</b></a> | <a id="logoutLink" href="#">Logout</a>';
-                addLogoutListener();
-                document.dispatchEvent(showLinksEvent); // Dispatch event to show links
-            } else {
-                console.log('User is not authenticated');
-                localStorage.removeItem('isAuthenticated');
-                localStorage.removeItem('userRole');
-                authStatusElement.innerHTML = '<a href="/login.html"><img src="/icons/login.png" alt="Login">Login</a>';
-                document.dispatchEvent(hideLinksEvent); // Dispatch event to hide links
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to check authentication status');
             }
-        } else {
-            console.error('authStatus element not found');
-        }
-    })
-    .catch(error => {
-        console.error('Error checking authentication status:', error);
-    });
+            return response.json();
+        })
+        .then(data => {
+            console.log('Authentication status:', data);
+
+            // Update the navbar based on the authentication status
+            var authStatusElement = document.getElementById('authStatus');
+
+            if (authStatusElement) {
+                if (data.isAuthenticated) {
+                    console.log('User is authenticated');
+                    localStorage.setItem('isAuthenticated', data.user._id);
+                    localStorage.setItem('userRole', data.user.role);
+                    authStatusElement.innerHTML = '<a id="managerLink" href="/myAccount.html"><img src="/icons/login.png" alt="MyAccount"><b>My account</b></a> | <a id="logoutLink" href="#">Logout</a>';
+                    addLogoutListener();
+                    document.dispatchEvent(showLinksEvent);
+                } else {
+                    console.log('User is not authenticated');
+                    localStorage.removeItem('isAuthenticated');
+                    localStorage.removeItem('userRole');
+                    authStatusElement.innerHTML = '<a href="/login.html"><img src="/icons/login.png" alt="Login">Login</a>';
+                    document.dispatchEvent(hideLinksEvent);
+                }
+            } else {
+                console.error('authStatus element not found');
+            }
+        })
+        .catch(error => {
+            console.error('Error checking authentication status:', error);
+        });
 }
 
-// Login
+// Fetch account details
+export function fetchAccountDetails() {
+    fetch('http://localhost:3000/auth/status', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch user details');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Update labels with user details
+            var userNameLabel = document.getElementById('userNameLabel');
+            var userRoleLabel = document.getElementById('userRoleLabel');
+
+            if (userNameLabel && userRoleLabel) {
+                userNameLabel.textContent = `Username: ${data.user.username}`;
+                userRoleLabel.textContent = `Role: ${data.user.role}`;
+            } else {
+                console.error('Labels not found');
+            }
+
+            // Fetch and display purchase history
+            fetchPurchaseHistory(data.user._id);
+
+        })
+        .catch(error => {
+            console.error('Error fetching user details:', error);
+        });
+}
+
+// Function to fetch purchase history
+export function fetchPurchaseHistory(userId) {
+    console.log('Fetching purchase history for user ID:', userId);
+
+    fetch(`http://localhost:3000/purchase/history/${userId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch purchase history');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Purchase history data:', data);
+
+            var purchaseHistoryContainer = document.getElementById('purchaseHistoryContainer');
+
+            if (purchaseHistoryContainer) {
+                if (data.history && data.history.length > 0) {
+                    data.history.forEach(purchase => {
+                        var purchaseItem = document.createElement('div');
+                        purchaseItem.textContent = `Date: ${purchase.date}, Item: ${purchase.item}, Amount: ${purchase.amount}`;
+                        purchaseHistoryContainer.appendChild(purchaseItem);
+                    });
+                } else {
+                    purchaseHistoryContainer.textContent = 'No purchase history available.';
+                }
+            } else {
+                console.error('Purchase history container not found');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching purchase history:', error);
+        });
+}
+
+// Perform login operation
 export function loginUser(credentials) {
-    fetch('http://localhost:3000/auth/login', {
+    return fetch('http://localhost:3000/auth/login', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -60,28 +135,29 @@ export function loginUser(credentials) {
         },
         body: JSON.stringify(credentials)
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Login failed');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.isAuthenticated) {
-            checkAuthentication();            
-            window.location.href = '/';
-        }
-    })
-    .catch(error => {
-        console.error('Error during login:', error);
-    });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Login failed');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.isAuthenticated) {
+                checkAuthentication();
+                window.location.href = '/';
+            }
+        })
+        .catch(error => {
+            console.error('Error during login:', error);
+            throw error;
+        });
 }
 
 // Add logout listener
 export function addLogoutListener() {
     var logoutLink = document.getElementById('logoutLink');
     if (logoutLink) {
-        logoutLink.addEventListener('click', function(event) {
+        logoutLink.addEventListener('click', function (event) {
             event.preventDefault();
 
             // Clear local storage
@@ -94,12 +170,12 @@ export function addLogoutListener() {
                     'Accept': 'application/json'
                 }
             })
-            .then(() => {
-                window.location.href = '/';
-            })
-            .catch(error => {
-                console.error('Error logging out:', error);
-            });
+                .then(() => {
+                    window.location.href = '/';
+                })
+                .catch(error => {
+                    console.error('Error logging out:', error);
+                });
         });
     } else {
         console.error('Logout link not found');
