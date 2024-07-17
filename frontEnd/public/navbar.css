@@ -35,6 +35,14 @@ nav {
     padding: 10px 20px;
 }
 
+.nav-item.hidden {
+    display: none;
+}
+
+.nav-item.visible {
+    display: inline-block;
+}
+
 /* Navigation list */
 .nav-list {
     display: flex;

@@ -28,7 +28,12 @@ function includeNavbar() {
 // Call the function to include the navbar content when the page loads
 window.onload = function() {
     includeNavbar();
-};    
+};
+
+// Ensure checkAuthentication runs after the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    checkAuthentication();
+});
 
 // Check authentication status and cart item count after including the navbar
 export function updateNavbarDisplay(){    

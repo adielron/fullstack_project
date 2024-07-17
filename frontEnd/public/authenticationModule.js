@@ -1,5 +1,8 @@
 // Authentication module for login, logout and permissions
 
+export const showLinksEvent = new Event('showLinks');
+export const hideLinksEvent = new Event('hideLinks');
+
 // Check authentication
 export function checkAuthentication() {
     fetch('http://localhost:3000/auth/status', {
@@ -16,18 +19,27 @@ export function checkAuthentication() {
         return response.json();
     })
     .then(data => {
-        console.log(data.user);
+        console.log('Authentication status:', data);
 
         // Update the navbar based on the authentication status
         var authStatusElement = document.getElementById('authStatus');
+        var itemsLink = document.getElementById('itemsLink');
+        var statisticsLink = document.getElementById('statisticsLink');
+
         if (authStatusElement) {
             if (data.isAuthenticated) {
+                console.log('User is authenticated');
                 localStorage.setItem('isAuthenticated', data.user._id);
+                localStorage.setItem('userRole', data.user.role);
                 authStatusElement.innerHTML = '<a id="managerLink" href="/myAccount.html"><img src="/icons/login.png" alt="MyAccount"><b>My account</b></a> | <a id="logoutLink" href="#">Logout</a>';
                 addLogoutListener();
+                document.dispatchEvent(showLinksEvent); // Dispatch event to show links
             } else {
+                console.log('User is not authenticated');
                 localStorage.removeItem('isAuthenticated');
+                localStorage.removeItem('userRole');
                 authStatusElement.innerHTML = '<a href="/login.html"><img src="/icons/login.png" alt="Login">Login</a>';
+                document.dispatchEvent(hideLinksEvent); // Dispatch event to hide links
             }
         } else {
             console.error('authStatus element not found');
@@ -56,8 +68,7 @@ export function loginUser(credentials) {
     })
     .then(data => {
         if (data.isAuthenticated) {
-            checkAuthentication();
-            // Redirect or update the UI as needed
+            checkAuthentication();            
             window.location.href = '/';
         }
     })
@@ -67,7 +78,6 @@ export function loginUser(credentials) {
 }
 
 // Add logout listener
-// Add logout listener
 export function addLogoutListener() {
     var logoutLink = document.getElementById('logoutLink');
     if (logoutLink) {
@@ -76,29 +86,38 @@ export function addLogoutListener() {
 
             // Clear local storage
             localStorage.removeItem('isAuthenticated');
-
-            // Send a logout request to the server
+            localStorage.removeItem('userRole');
             fetch('http://localhost:3000/auth/logout', {
                 method: 'GET',
-                credentials: 'include',
+                credentials: 'include', // Include credentials (cookies)
                 headers: {
                     'Accept': 'application/json'
                 }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to log out');
-                }
-                // Redirect to home page to update the UI
+            .then(() => {
                 window.location.href = '/';
             })
             .catch(error => {
-                console.error('Error during logout:', error);
-                // Redirect to home page even if there is an error during logout
-                window.location.href = '/';
+                console.error('Error logging out:', error);
             });
         });
     } else {
         console.error('Logout link not found');
     }
 }
+
+document.addEventListener('showLinks', () => {
+    var itemsLink = document.getElementById('itemsLink');
+    var statisticsLink = document.getElementById('statisticsLink');
+
+    itemsLink.classList.add('visible');
+    statisticsLink.classList.add('visible');
+});
+
+document.addEventListener('hideLinks', () => {
+    var itemsLink = document.getElementById('itemsLink');
+    var statisticsLink = document.getElementById('statisticsLink');
+
+    itemsLink.classList.remove('visible');
+    statisticsLink.classList.remove('visible');
+});

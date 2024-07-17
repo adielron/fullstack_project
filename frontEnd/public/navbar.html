@@ -6,11 +6,7 @@
     <link rel="icon" type="image/png" href="/icons/logo.png">
     <title>Navbar</title>
     <!-- Link to navbar.css -->
-    <link rel="stylesheet" href="./navbar.css">
-    <script type="module">        
-        import { displayCartItemCount } from './cartModule.js';
-        displayCartItemCount();
-    </script>    
+    <link rel="stylesheet" href="./navbar.css">      
 </head>
 <body>
 
@@ -23,15 +19,18 @@
         </a>
     </li>
     <ul>      
-        <li><a href="/item">
-            <img src="/icons/items.png" alt="Items">
-            Items
-        </a></li>        
-        <li><a href="/statistics">
-            <img src="/icons/group.png" alt="Statistics">
-            Statistics
-        </a></li>       
-        
+        <li class="nav-item hidden" id="itemsLink">
+            <a href="/item">
+                <img src="/icons/items.png" alt="Items">
+                Items
+            </a>
+        </li>        
+        <li class="nav-item hidden" id="statisticsLink">
+            <a href="/statistics">
+                <img src="/icons/group.png" alt="Statistics">
+                Statistics
+            </a>
+        </li>
         <li><a href="/api">
             <img src="/icons/api.png" alt="API">
             API
