@@ -30,8 +30,8 @@ window.onload = function() {
     includeNavbar();
 };    
 
-export function updateNavbarDisplay(){
-    // Check authentication status and cart item count after including the navbar
+// Check authentication status and cart item count after including the navbar
+export function updateNavbarDisplay(){    
     checkAuthentication();
     displayCartItemCount();    
 }

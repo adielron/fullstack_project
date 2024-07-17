@@ -1,3 +1,6 @@
+import { updateNavbarDisplay } from "./navbar.js";
+
+// Load the map
 function loadMap() {
     var map = new Microsoft.Maps.Map('#map', {
         credentials: 'ApsBmst2FQ5jNlB3rU2ru-aDMWpo1s6ydhgmVhIoqgUqxlJcnbEZGJ_EY9V6-De4',
@@ -19,7 +22,7 @@ function loadMap() {
     addRandomPushpins(map, 10); // 10 random pins within Israel
 }
 
-// Function to add random pushpins within Israel
+// Add random pushpins within Israel
 function addRandomPushpins(map, numPins) {
     var randomLocations = getRandomLocations(numPins);
 
@@ -33,7 +36,7 @@ function addRandomPushpins(map, numPins) {
     });
 }
 
-// Function to get random locations within Israel
+// Get random locations within Israel
 function getRandomLocations(numLocations) {
     var locations = [];
     var israelCenterLat = 32.0853,
@@ -53,17 +56,8 @@ function getRandomInRange(min, max) {
     return Math.random() * (max - min) + min;
 }
 
-function loadMapScenario() {
+// Load map scenario and update navigation bar display
+export function loadMapScenario() {
     loadMap();
+    updateNavbarDisplay();
 }
-
-window.addEventListener('load', function() {
-    if (window.Microsoft && Microsoft.Maps) {
-        loadMap();
-    } else {
-
-        window.loadMapScenario = function() {
-            loadMap();
-        };
-    }
-});
