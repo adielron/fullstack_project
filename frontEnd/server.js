@@ -41,6 +41,14 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
+app.get('/myAccount', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'myAccount.html'));
+});
+
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'register.html'));
+});
+
 app.get('/search_advanced', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'search_advanced.html'));
 });
