@@ -9,12 +9,13 @@
   <script type="module">
     import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
     import { updateNavbarDisplay } from './navbar.js';
-    import { fetchAccountDetails } from './authenticationModule.js';
+    import { fetchAccountDetails, loadPurchaseHistory } from './accountModule.js';
     // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
     loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);
-    fetchAccountDetails();     
+    fetchAccountDetails();
+    loadPurchaseHistory();     
   </script>     
-  <title>About AREA</title>
+  <title>My Account</title>
 </head>
 <body>
 
@@ -25,49 +26,19 @@
   <label id="userNameLabel"></label>
   <label id="userRoleLabel"></label>  
 </form>
-<form id="purchaseHistory" class="AREAForm">  
-  <h2>My purchase history:</h2>
-  <div id="purchaseHistoryContainer"></div>
-  <h1>Purchases</h1>
-  <div id="purchases-container"></div>
-
-  <script>
-      document.addEventListener("DOMContentLoaded", function() {
-          const userId = localStorage.getItem('isAuthenticated'); // Retrieve user ID from local storage
-
-          fetch('http://localhost:3000/purchases')
-              .then(response => response.json())
-              .then(purchases => {
-                  const purchasesContainer = document.getElementById('purchases-container');
-                  
-                  purchases.forEach(purchase => {
-                      if (purchase.customerId === userId) {
-                          fetch(`http://localhost:3000/items/${purchase.itemId}`)
-                              .then(response => response.json())
-                              .then(item => {
-                                  const purchaseDiv = document.createElement('div');
-                                  purchaseDiv.className = 'purchase';
-                                  purchaseDiv.innerHTML = `
-                                    
-                                      <p><strong>Name:</strong> ${item.name}</p>
-                                      <p><strong>Description:</strong> ${item.description}</p>
-                                      <p><strong>Date:</strong> ${purchase.date}</p>
-                                      <p><strong>price:</strong> ${item.price} $ </p>
-
-                                  `;
-                                  purchasesContainer.appendChild(purchaseDiv);
-                              })
-                              .catch(error => {
-                                  console.error('Error fetching item details:', error);
-                              });
-                      }
-                  });
-              })
-              .catch(error => {
-                  console.error('Error fetching purchases:', error);
-              });
-      });
-  </script>
-</form>
+<h2>My purchase history:</h2>   
+<table id="purchaseHistoryTable" class="AREATable">
+  <thead>
+      <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Date</th>
+          <th>Price</th>
+      </tr>
+  </thead>
+  <tbody>
+      <!-- Purchase history will be populated here -->
+  </tbody>
+</table>
 </body>
 </html>

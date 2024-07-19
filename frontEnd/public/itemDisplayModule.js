@@ -6,13 +6,13 @@ import { renderGraphs } from './statisticsModule.js';
 // Get items from the database and display them
 export async function fetchItems() {
     try {
-      const response = await fetch("http://localhost:3000/items");
-      const items = await response.json();
-      const itemContainer = document.getElementById("itemContainer");
-      displayItems(items, itemContainer, addToCart);
-      //renderGraphs(items);
+        const response = await fetch("http://localhost:3000/items");
+        const items = await response.json();
+        const itemContainer = document.getElementById("itemContainer");
+        displayItems(items, itemContainer, addToCart);
+        //renderGraphs(items);
     } catch (error) {
-      console.error("Error fetching items:", error);
+        console.error("Error fetching items:", error);
     }
 }
 
@@ -37,12 +37,17 @@ export async function displayItems(items, container, callbackFunc) {
         const price = document.createElement("p");
         price.textContent = "Price: $" + item.price;
 
+        const stock = document.createElement("p");
+        if (item.stock > 0) {
+            stock.textContent = "In stock";
+        }
+        else stock.textContent = "Out of stock";        
+
         const country = document.createElement("p");
         country.textContent = "Country: " + item.madeIn;
 
-
-        const stock = document.createElement("p");
-        stock.textContent = item.stock+ " units";
+        const category = document.createElement("p");
+        category.textContent = "Category: " + item.category;
 
         const button = document.createElement("button");
         if (callbackFunc === addToCart) {
@@ -56,10 +61,10 @@ export async function displayItems(items, container, callbackFunc) {
         itemDiv.appendChild(name);
         itemDiv.appendChild(description);
         itemDiv.appendChild(price);
-        itemDiv.appendChild(country);
-        itemDiv.appendChild(button);
-
         itemDiv.appendChild(stock);
+        itemDiv.appendChild(country);
+        itemDiv.appendChild(category);
+        itemDiv.appendChild(button);
 
         container.appendChild(itemDiv);
     });
@@ -75,7 +80,7 @@ export function loadCartItems() {
         const noItemsMessage = document.createElement('p');
         noItemsMessage.textContent = 'Your cart is empty.';
         cartItemsContainer.appendChild(noItemsMessage);
-    } else {        
-        displayItems(cartItems,cartItemsContainer,removeFromCart);     
+    } else {
+        displayItems(cartItems, cartItemsContainer, removeFromCart);
     }
 }

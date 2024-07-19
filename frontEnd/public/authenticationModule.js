@@ -49,43 +49,6 @@ export function checkAuthentication() {
         });
 }
 
-// Fetch account details
-export function fetchAccountDetails() {
-    fetch('http://localhost:3000/auth/status', {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-            'Accept': 'application/json'
-        }
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch user details');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Update labels with user details
-            console.log(data);
-            var userNameLabel = document.getElementById('userNameLabel');
-            var userRoleLabel = document.getElementById('userRoleLabel');
-
-            if (userNameLabel && userRoleLabel) {
-                userNameLabel.textContent = `Username: ${data.user.username}`;
-                userRoleLabel.textContent = `Role: ${data.user.role}`;
-            } else {
-                console.error('Labels not found');
-            }
-
-     
-
-        })
-        .catch(error => {
-            console.error('Error fetching user details:', error);
-        });
-}
-
-
 // Perform login operation
 export function loginUser(credentials) {
     return fetch('http://localhost:3000/auth/login', {
