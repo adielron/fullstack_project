@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="/icons/logo.png">
+  <link rel="stylesheet" href="./styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  
+  <script type="module">
+    import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
+    import { updateNavbarDisplay } from './navbar.js';
+    import { fetchAccountDetails } from './authenticationModule.js';
+    // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
+    loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);
+    fetchAccountDetails();     
+  </script>     
+  <title>About AREA</title>
+</head>
+<body>
+
+  <div id="navbar"></div>  
+
+<form id="myProfile" class="AREAForm">
+  <h2>My profile:</h2>   
+  <label id="userNameLabel"></label>
+  <label id="userRoleLabel"></label>  
+</form>
+<form id="purchaseHistory" class="AREAForm">  
+  <h2>My purchase history:</h2>
+  <div id="purchaseHistoryContainer"></div>
+  <h1>Purchases</h1>
+  <div id="purchases-container"></div>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function() {
+          const userId = localStorage.getItem('isAuthenticated'); // Retrieve user ID from local storage
+
+          fetch('http://localhost:3000/purchases')
+              .then(response => response.json())
+              .then(purchases => {
+                  const purchasesContainer = document.getElementById('purchases-container');
+                  
+                  purchases.forEach(purchase => {
+                      if (purchase.customerId === userId) {
+                          fetch(`http://localhost:3000/items/${purchase.itemId}`)
+                              .then(response => response.json())
+                              .then(item => {
+                                  const purchaseDiv = document.createElement('div');
+                                  purchaseDiv.className = 'purchase';
+                                  purchaseDiv.innerHTML = `
+                                    
+                                      <p><strong>Name:</strong> ${item.name}</p>
+                                      <p><strong>Description:</strong> ${item.description}</p>
+                                      <p><strong>Date:</strong> ${purchase.date}</p>
+                                      <p><strong>price:</strong> ${item.price} $ </p>
+
+                                  `;
+                                  purchasesContainer.appendChild(purchaseDiv);
+                              })
+                              .catch(error => {
+                                  console.error('Error fetching item details:', error);
+                              });
+                      }
+                  });
+              })
+              .catch(error => {
+                  console.error('Error fetching purchases:', error);
+              });
+      });
+  </script>
+</form>
+</body>
+</html>

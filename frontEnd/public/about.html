@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="/icons/logo.png">
+  <link rel="stylesheet" href="./styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  
+  <script type="module">
+    import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
+    import { updateNavbarDisplay } from './navbar.js'; 
+    // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
+    loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);    
+  </script>     
+  <title>About AREA</title>
+</head>
+<body>
+
+  <div id="navbar"></div>  
+
+<form id="about" class="AREAForm">
+  <h2>About AREA:</h2>
+  <h3>The project was made by:</h3>  
+  <label>Adi Elron</label>
+  <label>Raz Diamond</label>
+  <label>Elor Itzkovitz</label>
+  <label>Adi Cahli</label>  
+</form>
+
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./shop.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+
+    <script type="module">
+      import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
+      import { displayCartItemCount } from "./cartModule.js";
+      import { fetchItems } from "./statisticsModule.js";
+
+      // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update cart item count
+      loadHTMLWithScriptAndCallback("navbar.html","navbar","navbar.js",displayCartItemCount);
+
+      // Add event listeners
+     
+    </script>
+
+
+</head>
+<body>
+  <div id="navbar"></div>
+
+
+    <div id="itemList">
+      <!-- Item list will be dynamically populated here -->
+    </div>    
+    <!-- Containers for the graphs -->
+
+    <style>
+        .bar {
+            fill: steelblue;
+        }
+        .bar:hover {
+            fill: orange;
+        }
+        .label {
+            font-size: 12px;
+            fill: black;
+            text-anchor: middle;
+        }
+    </style>
+
+    <h2>Item Prices</h2>
+    <div id="graph1" style="width: 600px; height: 400px;"></div>
+
+    <h2>Country of Origin Distribution</h2>
+    <div id="graph2" style="width: 600px; height: 400px;"></div>
+
+    <script>
+        // Function to include HTML file
+        function includeHTML(filePath, targetElement, callback) {
+            fetch(filePath)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load HTML file');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    // Inject HTML content into target element
+                    document.getElementById(targetElement).innerHTML = html;
+                    if (callback) callback();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Call includeHTML function to include navbar.html and then load navbar.js
+        includeHTML('navbar.html', 'navbar', function() {
+            // Load navbar.js after navbar.html is included
+            var script = document.createElement('script');
+            script.src = 'navbar.js';
+            script.onload = function() {
+                // This ensures that fetchItems() is called only after navbar.js is loaded
+                fetchItems();
+            };
+            document.body.appendChild(script);
+        });
+
+        let cart = [];
+
+
+        async function fetchItems() {
+            try {
+                const response = await fetch('http://localhost:3000/items');
+                const items = await response.json();
+                // displayItems(items);
+                renderGraphs(items);  // Render graphs after fetching items
+            } catch (error) {
+                console.error('Error fetching items:', error);
+            }
+        }
+
+  
+        function renderGraphs(items) {
+            // Check for missing properties and log them
+            items.forEach((item, index) => {
+                if (typeof item.price !== 'number' || isNaN(item.price)) {
+                    console.warn(`Item at index ${index} has invalid price:`, item);
+                }
+                if (typeof item.madeIn !== 'string' || !item.madeIn) {
+                    console.warn(`Item at index ${index} has invalid country:`, item);
+                }
+            });
+
+            // Filter out items without valid prices or countries
+            const validItems = items.filter(item => typeof item.price === 'number' && !isNaN(item.price) &&
+                                                    typeof item.madeIn === 'string' && item.madeIn);
+
+            const validPrices = validItems.map(item => item.price);
+            const countries = validItems.map(item => item.madeIn);
+            const itemNames = validItems.map(item => item.name);
+
+            // Graph 1: Bar chart for item prices
+
+            const margin = { top: 20, right: 30, bottom: 40, left: 40 },
+                  width = 600 - margin.left - margin.right,
+                  height = 400 - margin.top - margin.bottom;
+
+            // Create the SVG container and set the origin
+            const svg1 = d3.select("#graph1")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            // X scale
+            const x = d3.scaleBand()
+                .domain(itemNames)
+                .range([0, width])
+                .padding(0.1);
+
+            // Y scale
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(validPrices)])
+                .nice()
+                .range([height, 0]);
+
+            // Add X axis
+            svg1.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x));
+
+            // Add Y axis
+            svg1.append("g")
+                .call(d3.axisLeft(y));
+
+            // Bars
+            svg1.selectAll(".bar")
+                .data(validItems)
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("x", d => x(d.name))
+                .attr("y", d => y(d.price))
+                .attr("width", x.bandwidth())
+                .attr("height", d => height - y(d.price))
+                .append("title")
+                .text(d => `$${d.price}`);
+
+            // Add labels
+            svg1.selectAll(".label")
+                .data(validItems)
+                .enter()
+                .append("text")
+                .attr("class", "label")
+                .attr("x", d => x(d.name) + x.bandwidth() / 2)
+                .attr("y", d => y(d.price) - 5)
+                .text(d => `$${d.price}`);
+          
+            // Graph 2: Pie chart for country distribution
+            const countryCount = countries.reduce((acc, country) => {
+                acc[country] = (acc[country] || 0) + 1;
+                return acc;
+            }, {});
+
+            const pieData = Object.keys(countryCount).map(country => ({
+                country: country,
+                count: countryCount[country]
+            }));
+
+            const svg2 = d3.select("#graph2")
+                .append("svg")
+                .attr("width", 600)
+                .attr("height", 400)
+                .append("g")
+                .attr("transform", "translate(300,200)");
+
+            const radius = Math.min(600, 400) / 2;
+
+            const pie = d3.pie().value(d => d.count);
+            const arc = d3.arc().innerRadius(0).outerRadius(radius);
+
+            const arcs = svg2.selectAll("arc")
+                .data(pie(pieData))
+                .enter()
+                .append("g")
+                .attr("class", "arc");
+
+            arcs.append("path")
+                .attr("d", arc)
+                .attr("fill", d => d3.schemeCategory10[d.index]);
+
+            arcs.append("text")
+                .attr("transform", d => "translate(" + arc.centroid(d) + ")")
+                .attr("text-anchor", "middle")
+                .text(d => d.data.country + " (" + d.data.count + ")");
+        }
+    </script>
+</body>
+</html>
