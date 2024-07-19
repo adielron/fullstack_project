@@ -40,6 +40,10 @@ export async function displayItems(items, container, callbackFunc) {
         const country = document.createElement("p");
         country.textContent = "Country: " + item.madeIn;
 
+
+        const stock = document.createElement("p");
+        stock.textContent = item.stock+ " units";
+
         const button = document.createElement("button");
         if (callbackFunc === addToCart) {
             button.textContent = "Add to Cart";
@@ -54,6 +58,8 @@ export async function displayItems(items, container, callbackFunc) {
         itemDiv.appendChild(price);
         itemDiv.appendChild(country);
         itemDiv.appendChild(button);
+
+        itemDiv.appendChild(stock);
 
         container.appendChild(itemDiv);
     });

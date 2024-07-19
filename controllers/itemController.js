@@ -32,6 +32,7 @@ exports.createItem = async (req, res) => {
     const savedItem = await newItem.save();
     res.status(201).json(savedItem);
   } catch (err) {
+    console.log(err);
     res.status(400).json({ message: err.message });
   }
 };
