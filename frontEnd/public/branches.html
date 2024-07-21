@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="icon" type="image/png" href="/icons/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">         
+    <script src="https://www.bing.com/api/maps/mapcontrol?key=ApsBmst2FQ5jNlB3rU2ru-aDMWpo1s6ydhgmVhIoqgUqxlJcnbEZGJ_EY9V6-De4" async defer></script>
+    <title>Our branches</title>
+</head>
+<body>
+    <div id="navbar"></div>
+    <div id="map" style="width: 100%; height: 500px;"></div>    
+    <script type="module">
+        import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
+        import { updateNavbarDisplay } from './navbar.js'; 
+        import { loadMapScenario } from './branches.js';
+
+        // Function to initialize the map after the navbar and Bing Maps are ready
+        function initialize() {
+            // Load the navbar and update its display
+            loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", () => {
+                updateNavbarDisplay();
+
+                // Wait for the Microsoft Maps API to load
+                if (window.Microsoft && Microsoft.Maps) {
+                    loadMapScenario();
+                } else {
+                    window.loadMapScenario = function() {
+                        loadMapScenario();
+                    };
+                }
+            });
+        }
+
+        // Ensure the map is loaded after all the scripts are ready
+        window.addEventListener('load', initialize);
+    </script>    
+</body>

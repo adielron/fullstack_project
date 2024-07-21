@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="/icons/logo.png">
+  <link rel="stylesheet" href="./styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+  <script type="module">
+    import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
+    import { updateNavbarDisplay } from './navbar.js'; 
+    // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
+    loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);    
+  </script>  
+  <title>Login to AREA</title>
+</head>
+<body>
+
+  <div id="navbar"></div>  
+
+  <form id="loginForm" class="AREAForm">
+    <h2>Login to AREA:</h2>
+    <label for="name">Username:</label>
+    <input type="text" id="name" name="name" required>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <button type="submit">Login</button>
+    <a href="/register.html">New user? Join us here!</a>    
+</form>
+<p id="errorMessage">Invalid username and/or password. Please try again.</p>
+
+<script type="module">
+import { loginUser } from './authenticationModule.js';
+
+// Perform login based on credentials and authentication
+$(document).ready(function() {
+    $('#loginForm').submit(function(event) {
+        event.preventDefault();
+
+        var formData = {
+            username: $('#name').val(),
+            email: $('#email').val(),
+            password: $('#password').val()
+        };
+
+        // Perform login and return person to the previous page
+        loginUser(formData)
+            .then(() => {
+                console.log('Login successful');                
+                window.location.href = document.referrer;
+            })
+            .catch(error => {
+                console.error('Error during login:', error);
+                $('#errorMessage').show();                                    
+            });
+    });
+});
+</script>
+
+</body>
+</html>
