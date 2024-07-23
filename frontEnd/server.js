@@ -33,8 +33,8 @@ app.get('/cart', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'cart.html'));
 });
 
-app.get('/item', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'item.html'));
+app.get('/items', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'items.html'));
 });
 
 app.get('/login', (req, res) => {
@@ -64,14 +64,6 @@ app.get('/config', (req, res) => {
     res.json({ apiKey: STOCK_KEY });
 });
 
-
-app.get('/groupBy', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'groupBy.html'));
-});
-
-app.get('/purchases', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'purchases.html'));
-});
 
 // Start the server
 app.listen(port, () => {
