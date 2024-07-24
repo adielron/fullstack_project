@@ -11,7 +11,12 @@
       import { fetchItems } from "./statisticsModule.js";
 
       // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update cart item count
-      loadHTMLWithScriptAndCallback("navbar.html","navbar","navbar.js",updateNavbarDisplay);
+      loadHTMLWithScriptAndCallback(
+        "navbar.html",
+        "navbar",
+        "navbar.js",
+        updateNavbarDisplay
+      );
 
       // Add event listeners
       document
@@ -24,7 +29,7 @@
     <title>Show statistics</title>
     <style>
       body {
-        font-family: Arial, sans-serif;        
+        font-family: Arial, sans-serif;
       }
       h1 {
         text-align: center;
@@ -46,6 +51,17 @@
         cursor: pointer;
         margin-bottom: 10px;
       }
+
+      .charts-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        margin-top:50px;
+      }
+
+      .chart {
+        flex: 1;        
+      }
     </style>
   </head>
   <body>
@@ -55,7 +71,7 @@
 
     <!-- Dropdown for group by option -->
     <select id="groupByOption">
-      <option value="name">Name</option>
+      <option value="category">Category</option>
       <option value="madeIn">Made In</option>
       <option value="color">Color</option>
       <option value="distributor">Distributor</option>
@@ -68,11 +84,10 @@
     <div id="itemList">
       <!-- Item list will be dynamically populated here -->
     </div>
-
-    <h2>Bar Chart</h2>
-    <div id="graph1" style="width: 600px; height: 400px"></div>
-
-    <h2>Pie Chart</h2>
-    <div id="graph2" style="width: 600px; height: 400px"></div>
+    <!-- Container for charts -->
+    <div class="charts-container">      
+      <div id="graph1" class="chart" style="width: 600px; height: 600px"></div>      
+      <div id="graph2" class="chart" style="width: 600px; height: 600px"></div>
+    </div>
   </body>
 </html>
