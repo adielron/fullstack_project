@@ -1,84 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <link rel="stylesheet" href="./shop.css">    
+<head>    
+    <link rel="stylesheet" href="./styles.css">    
     <link rel="icon" type="image/png" href="/icons/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">    
     <script type="module">
         import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
-        import { updateNavbarDisplay } from './navbar.js'; 
-        // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
-        loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);    
+        import { updateNavbarDisplay } from './navbar.js';
+
+        // Function to initialize the map after the navbar
+        function initialize() {
+            // Load the navbar and update its display
+            loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", () => {
+                updateNavbarDisplay();
+            });
+        }
+
+        // Ensure the api is loaded after all the scripts are ready
+        window.addEventListener('load', initialize);
+    </script>
     </script>    
-    <title>Top Electronic Companies on NASDAQ</title>   
-    <style>
-        body {
-            font-family: Arial, sans-serif;            
-        }
-        h1 {
-            text-align: center;
-        }
-        .form-group {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .search-input {
-            width: 300px;
-            padding: 8px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-        .search-button {
-            padding: 8px 16px;
-            font-size: 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .stats-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .company-item {
-            font-size: 18px;
-            margin: 10px 0;
-        }
-        .company-item span {
-            display: inline-block;
-            min-width: 150px;
-        }
-    </style>
+    <title>Top Electronic Companies on NASDAQ</title>    
 </head>
 <body>
-    <div id="navbar"></div>
+    <div class="page-container">
+        <header>
+          <div id="navbar"></div>      
+        </header>
+    
+        <main>
+            <h1>Top 5 Electronic Companies on NASDAQ</h1>
 
-    <h1>Top 5 Electronic Companies on NASDAQ</h1>
-
-    <div class="form-group">
-        <input type="text" id="stockSymbolInput" class="search-input" placeholder="Enter Stock Symbol...">
-        <button id="searchButton" class="search-button">Search</button>
-    </div>
-
-    <div class="stats-container" id="statsContainer">
-        <!-- Company information will be displayed here -->
-    </div>
-
+            <div class="stock-form-group">
+                <input type="text" id="stockSymbolInput" class="stock-search-input" placeholder="Enter Stock Symbol...">
+                <button id="searchButton" class="stock-search-button">Search</button>
+            </div>
+        
+            <div class="stats-container" id="statsContainer">
+                <!-- Company information will be displayed here -->
+            </div>
+        </main>
+        <aside>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/6LPzOJbdu-0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </aside>
+    
+        <footer>
+          <p>AREA @ 2024</p>
+        </footer>
+      </div>
     <script>
         // List of top 5 electronic companies on NASDAQ
         const companies = [

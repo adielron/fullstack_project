@@ -15,12 +15,19 @@ export function isCartEmpty() {
 
 // Add an item to the cart
 export function addToCart(item) {
-    let cart = getCart();
-    cart.push(item);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    incrementCartItemCount();
-    console.log('Item added to cart:', item);
-    console.log('Cart:', cart);
+    if (item.stock <= 0 || item.stock == null) {
+        alert('Sorry, this item is out of stock.');
+        return;
+    } else {
+        let cart = getCart();
+        cart.push(item);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        incrementCartItemCount();        
+        item.stock--;
+        updateStock(item, item.stock);        
+        console.log('Item added to cart:', item);
+        console.log('Cart:', cart);
+    }
 }
 
 // Remove an item from the cart
@@ -33,6 +40,8 @@ export function removeFromCart(itemToRemove) {
         cart.splice(itemIndex, 1);
         localStorage.setItem('cart', JSON.stringify(cart));
         decrementCartItemCount();
+        itemToRemove.stock++;
+        updateStock(itemToRemove, itemToRemove.stock);
         console.log('Item removed from cart:', itemToRemove);
         console.log('Cart:', cart);
         // Dispatch a custom event for item removal
@@ -104,7 +113,7 @@ export function setupPurchaseAllButton() {
 // Handle purchase all logic
 function purchaseAllItems() {
 
-    const authStatus = getAuthentication();    
+    const authStatus = getAuthentication();
 
     // Check if there is an authentication, otherwise alert the user and refer to login.html
     if (authStatus.isAuthenticated) {
@@ -115,7 +124,7 @@ function purchaseAllItems() {
         }
 
         cart.forEach((item, index) => {
-            const storedUser = authStatus ? authStatus.userId : null;           
+            const storedUser = authStatus ? authStatus.userId : null;
 
             fetch("http://localhost:3000/purchases", {
                 method: "POST",
@@ -134,7 +143,7 @@ function purchaseAllItems() {
                     return response.json();
                 })
                 .then((data) => {
-                    console.log("Item purchased successfully:", data);
+                    console.log("Item purchased successfully:", data);                    
 
                     // Check if it's the last item to display the thank you message
                     if (index === cart.length - 1) {
@@ -157,7 +166,33 @@ function purchaseAllItems() {
 
     } else {
         console.log("Cannot make purchase if not logged in.");
-        alert("Please log in to continue:");        
-        window.location.href = '/login';        
+        alert("Please log in to continue:");
+        window.location.href = '/login';
     }
+}
+
+// Update item stock
+export function updateStock(item, newStock) {
+    fetch(`http://localhost:3000/items/${item.id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ stock: newStock }),
+        credentials: 'include'        
+    })
+    .then(response => {        
+        if (!response.ok) {
+            throw new Error('Failed to update item stock');            
+        }
+        return response.json();
+    })
+    .then(updatedItem => {
+        console.log('Item stock updated successfully:', updatedItem);
+        alert("yay");
+    })
+    .catch(error => {
+        console.error('Error updating item stock:', error);
+        alert("how");
+    });
 }

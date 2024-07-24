@@ -1,39 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <link rel="icon" type="image/png" href="/icons/logo.png">
-  <link rel="stylesheet" href="./styles.css">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  
-  <script type="module">
-    import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
-    import { updateNavbarDisplay } from './navbar.js';
-    import { loadOrderHistory } from './purchaseModule.js';
-    // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
-    loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);    
-    loadOrderHistory();     
-  </script>     
-  <title>My Account</title>
-</head>
-<body>
+  <head>
+    <link rel="icon" type="image/png" href="/icons/logo.png" />
+    <link rel="stylesheet" href="./styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="module">
+      import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
+      import { updateNavbarDisplay } from "./navbar.js";
+      import { loadOrderHistory } from "./purchaseModule.js";
+      // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
+      loadHTMLWithScriptAndCallback(
+        "navbar.html",
+        "navbar",
+        "navbar.js",
+        updateNavbarDisplay
+      );
+      loadOrderHistory();
+    </script>
+    <title>My Account</title>
+  </head>
+  <body>
+    <div class="page-container">
+      <header>
+        <div id="navbar"></div>
+      </header>
 
-  <div id="navbar"></div>
+      <main>
+        <h2>Order history:</h2>
+        <table id="orderHistoryTable" class="AREATable">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Date</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Purchase history will be populated here -->
+          </tbody>
+        </table>
+      </main>
 
-<h2>Order history:</h2>   
-<table id="orderHistoryTable" class="AREATable">
-  <thead>
-      <tr>
-          <th>Customer</th>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Date</th>
-          <th>Price</th>
-      </tr>
-  </thead>
-  <tbody>
-      <!-- Purchase history will be populated here -->
-  </tbody>
-</table>
-</body>
+      <footer>
+        <p>AREA @ 2024</p>
+      </footer>
+    </div>
+  </body>
 </html>

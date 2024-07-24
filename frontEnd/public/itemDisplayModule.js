@@ -1,16 +1,14 @@
 // Module for item display
 
 import { getCart, addToCart, removeFromCart } from './cartModule.js';
-import { renderGraphs } from './statisticsModule.js';
 
-// Get items from the database and display them
+/// Get items from the database and display them
 export async function fetchItems() {
     try {
         const response = await fetch("http://localhost:3000/items");
         const items = await response.json();
         const itemContainer = document.getElementById("itemContainer");
         displayItems(items, itemContainer, addToCart);
-        //renderGraphs(items);
     } catch (error) {
         console.error("Error fetching items:", error);
     }
@@ -20,54 +18,81 @@ export async function fetchItems() {
 export async function displayItems(items, container, callbackFunc) {
     container.innerHTML = "";
 
-    items.forEach((item) => {
-        const itemDiv = document.createElement("div");
-        itemDiv.classList.add("item");
+    if (items.length === 0 || items == null) {             
+        const noResults = document.createElement('div');
+        noResults.textContent = 'No items found.';
+        container.appendChild(noResults);
+    } else {
+        items.forEach((item) => {
+            const itemDiv = document.createElement("div");
+            itemDiv.classList.add("shop-item");
 
-        const img = document.createElement("img");
-        img.src = item.img;
-        img.alt = item.name;
+            const img = document.createElement("img");
+            img.src = item.img;
+            img.alt = item.name;
 
-        const name = document.createElement("h3");
-        name.textContent = item.name;
+            const name = document.createElement("h3");
+            name.textContent = item.name;
 
-        const description = document.createElement("p");
-        description.textContent = item.description;
+            const price = document.createElement("p");
+            price.textContent = "Price: $" + item.price;
 
-        const price = document.createElement("p");
-        price.textContent = "Price: $" + item.price;
+            const stock = document.createElement("p");
+            stock.textContent = item.stock > 0 ? "In stock" : "Out of stock";  
+                        
+            const descriptionPopup = document.createElement("div");
+            descriptionPopup.classList.add("description-popup");
+            descriptionPopup.innerHTML = `${item.description}<br><br><strong>Country:</strong> ${item.madeIn}<br><br><strong>Category:</strong> ${item.category}`;
 
-        const stock = document.createElement("p");
-        if (item.stock > 0) {
-            stock.textContent = "In stock";
-        }
-        else stock.textContent = "Out of stock";        
+            const viewDetailsButton = document.createElement("button");
+            viewDetailsButton.classList.add("view-details");
+            
+            // Show the popup when the mouse hovers over the button
+            viewDetailsButton.addEventListener("mouseover", () => {
+                showPopup(descriptionPopup);
+            });
 
-        const country = document.createElement("p");
-        country.textContent = "Country: " + item.madeIn;
+            // Hide the popup when the mouse leaves the button
+            viewDetailsButton.addEventListener("mouseout", () => {
+                hidePopup(descriptionPopup);
+            })
 
-        const category = document.createElement("p");
-        category.textContent = "Category: " + item.category;
+            // Show the popup when the mouse clicks on the button
+            viewDetailsButton.addEventListener("click", () => {
+                showPopup(descriptionPopup);
+            });
 
-        const button = document.createElement("button");
-        if (callbackFunc === addToCart) {
-            button.textContent = "Add to Cart";
-        } else {
-            button.textContent = "Remove from Cart";
-        }
-        button.addEventListener("click", () => callbackFunc(item));
+            // Hide the popup when the mouse hovers over the image
+            img.addEventListener("mouseover", () => {
+                hidePopup(descriptionPopup);
+            });
 
-        itemDiv.appendChild(img);
-        itemDiv.appendChild(name);
-        itemDiv.appendChild(description);
-        itemDiv.appendChild(price);
-        itemDiv.appendChild(stock);
-        itemDiv.appendChild(country);
-        itemDiv.appendChild(category);
-        itemDiv.appendChild(button);
+            const button = document.createElement("button");
+            button.textContent = callbackFunc === addToCart ? "Add to Cart" : "Remove from Cart";
+            button.addEventListener("click", () => callbackFunc(item));            
 
-        container.appendChild(itemDiv);
-    });
+            itemDiv.appendChild(img);            
+            itemDiv.appendChild(name); 
+            itemDiv.appendChild(viewDetailsButton);
+            itemDiv.appendChild(descriptionPopup);          
+            itemDiv.appendChild(price);
+            itemDiv.appendChild(stock);
+            itemDiv.appendChild(button);
+
+            container.appendChild(itemDiv);
+        });
+    }
+}
+
+// Function to show the popup
+function showPopup(popup) {    
+    popup.style.display = 'block';
+    popup.style.position = 'absolute';    
+}
+
+// Function to hide the popup
+function hidePopup(popup) {
+    popup.style.display = 'none';
 }
 
 // Load cart items
@@ -83,4 +108,5 @@ export function loadCartItems() {
     } else {
         displayItems(cartItems, cartItemsContainer, removeFromCart);
     }
+
 }

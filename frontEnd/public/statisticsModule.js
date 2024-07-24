@@ -34,7 +34,7 @@ export function displayItems(items) {
 export function renderGraphs(items) {
     console.log('Rendering graphs with items:', items);
 
-    const categories = items.map(item => item._id);    
+    const categories = items.map(item => item._id);
     const totalItems = items.map(item => item.totalItems);
 
     // Clear previous graphs
@@ -89,7 +89,7 @@ export function renderGraphs(items) {
         .attr("width", x.bandwidth())
         .attr("height", d => height - y(d.totalItems))
         .attr("fill", "steelblue");
-    
+
     // Add labels
     svg1.selectAll(".label")
         .data(items)
@@ -119,6 +119,17 @@ export function renderGraphs(items) {
     const pie = d3.pie().value(d => d.count);
     const arc = d3.arc().innerRadius(0).outerRadius(radius);
 
+    // Define color scheme
+    const colorScheme = [
+        '#0E1B3D',
+        '#263451', 
+        '#3F4D65', 
+        '#576779',
+        '#6F808D',
+        '#8899A1',
+        '#A0B2B5',
+    ];
+
     const arcs = svg2.selectAll("arc")
         .data(pie(pieData))
         .enter()
@@ -127,10 +138,11 @@ export function renderGraphs(items) {
 
     arcs.append("path")
         .attr("d", arc)
-        .attr("fill", (d, i) => d3.schemeCategory10[i % d3.schemeCategory10.length]);
+        .attr("fill", (d, i) => colorScheme[i % colorScheme.length]);
 
     arcs.append("text")
         .attr("transform", d => `translate(${arc.centroid(d)})`)
         .attr("text-anchor", "middle")
+        .attr("fill", "white")
         .text(d => `${d.data.category} (${d.data.count})`);
 }

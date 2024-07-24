@@ -1,4 +1,6 @@
 
+import { getAuthentication } from './authenticationModule.js';
+
 // Load table items
 export function loadItemTableData() {
     fetch('http://localhost:3000/items')
@@ -45,9 +47,17 @@ export function loadItemTableData() {
 
 // Create new item
 export function createItem() {
-    $(document).ready(function() {
-        $('#createItemForm').submit(function(event) {
+    $(document).ready(function () {
+        $('#createItemForm').submit(function (event) {
             event.preventDefault();
+
+            const authStatus = getAuthentication();
+
+            // Check if the user is authenticated as a manager
+            if (!authStatus.isAuthenticated || authStatus.userRole !== 'manager') {
+                $('#errorMessage').text('You must be a manager to add items.').show();
+                return;
+            }
 
             // Serialize the form data
             var formData = $(this).serialize();
@@ -59,13 +69,13 @@ export function createItem() {
                 data: formData,
                 contentType: 'application/x-www-form-urlencoded',
                 xhrFields: {
-                    withCredentials: true 
+                    withCredentials: true
                 },
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                success: function(response) {
+                success: function (response) {
                     // Handle the successful response
                     $('#errorMessage').hide();
                     $('#successMessage').show().delay(3000).fadeOut();
@@ -81,23 +91,23 @@ export function createItem() {
                         <td>${response.price}</td>
                         <td>${response.stock}</td>
                         <td>
-                            <button class="edit-btn" data-id="${response.name}">Edit</button>
-                            <button class="delete-btn" data-id="${response.name}">Delete</button>
+                            <button class="edit-btn" data-id="${response.id}">Edit</button>
+                            <button class="delete-btn" data-id="${response.id}">Delete</button>
                         </td>
                     `);
                     tableBody.append(row);
 
                     // Add event listeners for the new edit and delete buttons
-                    addEditEventListener(row.querySelector('.edit-btn'));
-                    addDeleteEventListener(row.querySelector('.delete-btn'));
+                    addEditEventListener(row.find('.edit-btn')[0]);
+                    addDeleteEventListener(row.find('.delete-btn')[0]);
 
                     // Hide the popup
                     $('#createItemPopup').hide();
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     // Handle errors
-                    console.error('Only employees can add items to the store', error);
-                    $('#errorMessage').show();
+                    console.error('Error adding item:', error);
+                    $('#errorMessage').text('Failed to add item. Please try again.').show();
                 }
             });
         });
@@ -106,22 +116,30 @@ export function createItem() {
 
 // Add event listener for edit button
 export function addEditEventListener(editButton) {
-    editButton.addEventListener('click', function() {
+    editButton.addEventListener('click', function () {
         const itemId = this.getAttribute('data-id');
 
         // Fetch the current item details
-        fetch(`http://localhost:3000/items/${itemId}`)
-            .then(response => response.json())
+        fetch(`http://localhost:3000/items/${itemId}`, {
+            method: 'GET',
+            credentials: 'include' // Ensure cookies are sent if needed
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch item details');
+                }
+                return response.json();
+            })
             .then(item => {
                 console.log('Fetched item details:', item);
 
                 // Populate the form with current item details
                 document.getElementById('editItemId').value = item.id;
-                document.getElementById('editName').value = item.name;
-                document.getElementById('editCategory').value = item.category;
-                document.getElementById('editDescription').value = item.description;
-                document.getElementById('editPrice').value = item.price;
-                document.getElementById('editStock').value = item.stock;
+                document.getElementById('editName').value = item.name || '';
+                document.getElementById('editCategory').value = item.category || '';
+                document.getElementById('editDescription').value = item.description || '';
+                document.getElementById('editPrice').value = item.price || '';
+                document.getElementById('editStock').value = item.stock || '';
                 document.getElementById('editWeight').value = item.weight || '';
                 document.getElementById('editMadeIn').value = item.madeIn || '';
                 document.getElementById('editColor').value = item.color || '';
@@ -134,86 +152,120 @@ export function addEditEventListener(editButton) {
             })
             .catch(error => {
                 console.error('Error fetching item details:', error);
+                alert('Failed to load item details. Please try again.');
             });
     });
 }
 
 // Handle form submission for editing an item
 export function handleEditItemForm() {
-    document.getElementById('editItemForm').addEventListener('submit', function(event) {
-        event.preventDefault();
+    $(document).ready(function () {
+        $('#editItemForm').submit(function (event) {
+            event.preventDefault();
 
-        const itemId = document.getElementById('editItemId').value;
-        const formData = {
-            name: document.getElementById('editName').value,
-            category: document.getElementById('editCategory').value,
-            description: document.getElementById('editDescription').value,
-            price: document.getElementById('editPrice').value,
-            stock: document.getElementById('editStock').value,
-            weight: document.getElementById('editWeight').value,
-            madeIn: document.getElementById('editMadeIn').value,
-            color: document.getElementById('editColor').value,
-            distributor: document.getElementById('editDistributor').value,
-            quality: document.getElementById('editQuality').value,
-            img: document.getElementById('editImg').value
-        };
+            const authStatus = getAuthentication();
 
-        fetch(`http://localhost:3000/items/${itemId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData),
-            credentials: 'include'
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to update item');
+            // Check if the user is authenticated as a manager
+            if (!authStatus.isAuthenticated || authStatus.userRole !== 'manager') {
+                $('#errorMessage').text('You must be a manager to edit items.').show();
+                return;
             }
-            return response.json();
-        })
-        .then(updatedItem => {
-            // Update the row with the new details
-            const row = document.querySelector(`button.edit-btn[data-id="${itemId}"]`).closest('tr');
-            row.querySelector('td:nth-child(2)').textContent = updatedItem.category;
-            row.querySelector('td:nth-child(3)').textContent = updatedItem.name;
-            row.querySelector('td:nth-child(4)').textContent = updatedItem.description;
-            row.querySelector('td:nth-child(5)').textContent = updatedItem.price;
-            row.querySelector('td:nth-child(6)').textContent = updatedItem.stock;
 
-            // Hide the edit item form and popup
-            document.getElementById('editItemForm').reset();
-            document.getElementById('editItemPopup').style.display = 'none';
-        })
-        .catch(error => {
-            console.error('Error updating item:', error);
+            // Serialize the form data
+            var formData = $(this).serialize();
+            var itemId = $('#editItemId').val(); // Get the item ID
+
+            // Send a PUT request to the backend
+            $.ajax({
+                type: 'PUT',
+                url: `http://localhost:3000/items/${itemId}`,
+                data: formData,
+                contentType: 'application/x-www-form-urlencoded',
+                xhrFields: {
+                    withCredentials: true
+                },
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                success: function (response) {
+                    // Handle the successful response
+                    $('#editErrorMessage').hide();
+                    $('#editSuccessMessage').show().delay(3000).fadeOut();
+                    $('#editItemForm')[0].reset();
+
+                    // Update the table row with the new details
+                    const row = $(`button.edit-btn[data-id="${itemId}"]`).closest('tr');
+                    row.html(`
+                        <td>${response.id}</td>
+                        <td>${response.category}</td>
+                        <td>${response.name}</td>
+                        <td>${response.description}</td>
+                        <td>${response.price}</td>
+                        <td>${response.stock}</td>
+                        <td>
+                            <button class="edit-btn" data-id="${response.id}">Edit</button>
+                            <button class="delete-btn" data-id="${response.id}">Delete</button>
+                        </td>
+                    `);
+
+                    // Add event listeners for the updated edit and delete buttons
+                    addEditEventListener(row.find('.edit-btn')[0]);
+                    addDeleteEventListener(row.find('.delete-btn')[0]);
+
+                    // Hide the edit item form and popup
+                    $('#editItemPopup').hide();
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors
+                    console.error('Error updating item:', error);
+                    $('#editErrorMessage').show();
+                }
+            });
         });
     });
 }
 
 // Add event listener for delete button
 export function addDeleteEventListener(deleteButton) {
-    deleteButton.addEventListener('click', function() {
+    deleteButton.addEventListener('click', function () {
         const itemId = this.getAttribute('data-id');
 
+        const authStatus = getAuthentication();
+
+        // Check if the user is authenticated as a manager
+        if (!authStatus.isAuthenticated || authStatus.userRole !== 'manager') {
+            $('#errorMessage').text('You must be a manager to delete items.').show();
+            return;
+        }
+
+        // Confirm deletion
+        if (!confirm('Are you sure you want to delete this item?')) {
+            return;
+        }
+
         // Send DELETE request to remove the item
-        fetch(`/items/${itemId}`, {
+        fetch(`http://localhost:3000/items/${itemId}`, {
             method: 'DELETE',
-            credentials: 'include'
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to delete item');
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
             }
-            return response.json();
         })
-        .then(() => {
-            // Remove the item row from the table
-            this.closest('tr').remove();
-        })
-        .catch(error => {
-            console.error('Error deleting item:', error);
-        });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to delete item: ${response.status} ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(() => {
+                // Remove the item row from the table
+                this.closest('tr').remove();
+            })
+            .catch(error => {
+                console.error('Error deleting item:', error);
+                alert('Failed to delete item. Please try again.');
+            });
     });
 }
 
@@ -232,7 +284,7 @@ document.getElementById('closePopupBtn').addEventListener('click', function () {
 document.addEventListener('DOMContentLoaded', handleEditItemForm);
 
 // Handle Close button click in the edit item form
-document.getElementById('closeEditPopupBtn').addEventListener('click', function() {
+document.getElementById('closeEditPopupBtn').addEventListener('click', function () {
     document.getElementById('editItemForm').reset();
     document.getElementById('editItemPopup').style.display = 'none';
 });

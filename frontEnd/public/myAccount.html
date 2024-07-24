@@ -20,26 +20,40 @@
 </head>
 <body>
 
-  <div id="navbar"></div>  
+  <div class="page-container">
+    <header>
+      <div id="navbar"></div>      
+    </header>
 
-<form id="myProfile" class="AREAForm">
-  <h2>My profile:</h2>   
-  <label id="userNameLabel"></label>
-  <label id="userRoleLabel"></label>  
-</form>
-<h2>My purchase history:</h2>   
-<table id="purchaseHistoryTable" class="AREATable">
-  <thead>
-      <tr>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Date</th>
-          <th>Price</th>
-      </tr>
-  </thead>
-  <tbody>
-      <!-- Purchase history will be populated here -->
-  </tbody>
-</table>
+    <main>
+      <section>
+        <form id="myProfile" class="AREAForm">
+          <h2>My profile:</h2>   
+          <label id="userNameLabel"></label>
+          <label id="userRoleLabel"></label>  
+        </form>
+      </section>
+      <section>
+        <h2>My purchase history:</h2>   
+      <table id="purchaseHistoryTable" class="AREATable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Purchase history will be populated here -->
+        </tbody>
+      </table>
+      </section>
+    </main>
+
+    <footer>
+      <p>AREA @ 2024</p>
+    </footer>
+  </div> 
 </body>
 </html>

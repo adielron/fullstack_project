@@ -1,0 +1,37 @@
+  .shop-item {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  .shop-item img {
+    max-width: 100px;
+    max-height: 100px;
+    display: block;
+    margin: 0 auto 10px;
+  }
+  .shop-item h3 {
+    text-align: center;
+  }
+  .shop-item p {
+    font-family: 'AREAFont', sans-serif;
+    margin-bottom: 5px;
+  }
+  .shop-item button,
+  .purchase-button {
+    display: block;
+    margin: 10px auto 0;
+    padding: 8px 16px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  } 
+  
+  .purchase-button {
+    margin: 0px;
+    margin-bottom: 50px;
+  }
