@@ -11,12 +11,7 @@
       import { updateNavbarDisplay } from "./navbar.js";
       import { loadItemTableData, createItem } from "./itemsModule.js";
       // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
-      loadHTMLWithScriptAndCallback(
-        "navbar.html",
-        "navbar",
-        "navbar.js",
-        updateNavbarDisplay
-      );
+      loadHTMLWithScriptAndCallback("navbar.html","navbar","navbar.js",updateNavbarDisplay);
       loadItemTableData();
       createItem();      
     </script>
@@ -111,8 +106,10 @@
                 <button type="submit">Submit</button>
                 <button type="button" id="closePopupBtn">Close</button>
             </div>
-        </form>
-        <form id="editItemForm" class="AREAForm" style="display: none;">
+        </form>       
+    </div>
+    <div id="editItemPopup" class="popup">
+        <form id="editItemForm" class="AREAForm">
             <h2>Edit Item</h2>
             <input type="hidden" id="editItemId">
             
@@ -146,6 +143,36 @@
                 <label for="editStock">Stock Count:</label>
                 <input type="number" id="editStock" name="stock" min="1" step="1" required>
             </div>
+    
+            <div class="form-group">
+                <label for="editWeight">Weight:</label>
+                <input type="text" id="editWeight" name="weight" />
+            </div>
+        
+            <div class="form-group">
+                <label for="editMadeIn">Made In:</label>
+                <input type="text" id="editMadeIn" name="madeIn" />
+            </div>
+        
+            <div class="form-group">
+                <label for="editColor">Color:</label>
+                <input type="text" id="editColor" name="color" />
+            </div>
+        
+            <div class="form-group">
+                <label for="editDistributor">Distributor:</label>
+                <input type="text" id="editDistributor" name="distributor" />
+            </div>
+        
+            <div class="form-group">
+                <label for="editQuality">Quality:</label>
+                <input type="text" id="editQuality" name="quality" />
+            </div>
+        
+            <div class="form-group">
+                <label for="editImg">Image link:</label>
+                <input type="text" id="editImg" name="img" />
+            </div>
         
             <div class="form-actions">
                 <button type="submit">Save</button>
@@ -153,7 +180,6 @@
             </div>
         </form>
     </div>
-
     <div id="successMessage">Item created successfully!</div>
     <div id="errorMessage" style="color: red; display: none">
       Error creating item. Only employees can add items to the store.

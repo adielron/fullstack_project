@@ -33,8 +33,7 @@
       <input type="text" id="address" name="address">
       <label for="role">Role:</label>
       <select id="role" name="role">
-        <option value="customer">Customer</option>
-        <option value="worker">Worker</option>
+        <option value="customer">Customer</option>        
         <option value="manager">Manager</option>
       </select><br><br>
       <button type="submit">Register</button>
@@ -57,9 +56,7 @@
 
         var url = '';
         if (formData.role === 'customer') {
-            url = 'http://localhost:3000/auth/register/other';
-        } else if (formData.role === 'worker') {
-            url = 'http://localhost:3000/auth/register/other';
+            url = 'http://localhost:3000/auth/register/other';        
         } else if (formData.role === 'manager') {
             url = 'http://localhost:3000/auth/register/manager';
         }
@@ -71,7 +68,7 @@
             contentType: 'application/json',
             success: function(response) {
                 console.log(response);
-                window.location.href = window.location.href; // Redirect to current page on success
+                window.location.href = 'shop.html';
             },
             error: function(xhr, status, error) {
                 console.error(error);

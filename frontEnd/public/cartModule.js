@@ -1,6 +1,6 @@
 // Module for cart management
 
-import { checkAuthentication } from './authenticationModule.js';
+import { getAuthentication } from './authenticationModule.js';
 
 // Get cart items
 export function getCart() {
@@ -25,9 +25,9 @@ export function addToCart(item) {
 
 // Remove an item from the cart
 export function removeFromCart(itemToRemove) {
-    let cart = getCart();    
+    let cart = getCart();
     // Find the index of the first instance of the item to remove
-    const itemIndex = cart.findIndex(item => item.name === itemToRemove.name);    
+    const itemIndex = cart.findIndex(item => item.name === itemToRemove.name);
     if (itemIndex !== -1) {
         // Remove the first instance of the item
         cart.splice(itemIndex, 1);
@@ -38,12 +38,12 @@ export function removeFromCart(itemToRemove) {
         // Dispatch a custom event for item removal
         const event = new CustomEvent('itemRemoved');
         document.dispatchEvent(event);
-    }   
+    }
 }
 
 // Increment cart item count
 export function incrementCartItemCount() {
-    let cartItemCount = localStorage.getItem("cartItemCount") ? parseInt(localStorage.getItem("cartItemCount")) : 0;  
+    let cartItemCount = localStorage.getItem("cartItemCount") ? parseInt(localStorage.getItem("cartItemCount")) : 0;
     cartItemCount++;
     localStorage.setItem("cartItemCount", cartItemCount);
     displayCartItemCount();
@@ -51,10 +51,10 @@ export function incrementCartItemCount() {
 
 // Decrement cart item count
 export function decrementCartItemCount() {
-    let cartItemCount = localStorage.getItem("cartItemCount") ? parseInt(localStorage.getItem("cartItemCount")) : 0; 
+    let cartItemCount = localStorage.getItem("cartItemCount") ? parseInt(localStorage.getItem("cartItemCount")) : 0;
     if (cartItemCount > 0) {
         cartItemCount--;
-    }    
+    }
     localStorage.setItem("cartItemCount", cartItemCount);
     displayCartItemCount();
 }
@@ -79,7 +79,6 @@ export function resetCart() {
 
 // Display cart item count
 export function displayCartItemCount() {
-    checkAuthentication();
     let cartItemCount = localStorage.getItem("cartItemCount") ? parseInt(localStorage.getItem("cartItemCount")) : 0;
     const cartItemCountDisplay = document.getElementById("cartItemCount");
     if (cartItemCountDisplay) {
@@ -104,50 +103,61 @@ export function setupPurchaseAllButton() {
 
 // Handle purchase all logic
 function purchaseAllItems() {
-    const cart = getCart();
-    if (!cart.length) {
-        alert("Your cart is empty!");
-        return;
-    }
 
-    cart.forEach((item, index) => {
-        const storedUser = localStorage.getItem("isAuthenticated");
+    const authStatus = getAuthentication();    
 
-        fetch("http://localhost:3000/purchases", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                customerId: storedUser,
-                itemId: item._id,
-            }),
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Failed to purchase item");
-            }
-            return response.json();
-        })
-        .then((data) => {
-            console.log("Item purchased successfully:", data);
+    // Check if there is an authentication, otherwise alert the user and refer to login.html
+    if (authStatus.isAuthenticated) {
+        const cart = getCart();
+        if (!cart.length) {
+            alert("Your cart is empty!");
+            return;
+        }
 
-            // Check if it's the last item to display the thank you message
-            if (index === cart.length - 1) {
-                const thankYouMessage = document.createElement("p");
-                thankYouMessage.textContent = "Thank you for your purchase!";
-                thankYouMessage.style.color = "green";
-                document.body.appendChild(thankYouMessage);
+        cart.forEach((item, index) => {
+            const storedUser = authStatus ? authStatus.userId : null;           
 
-                // Reset cart and reload
-                resetCart();
-            }
-        })
-        .catch((error) => {
-            console.error("Error purchasing item:", error);
+            fetch("http://localhost:3000/purchases", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    customerId: storedUser,
+                    itemId: item._id,
+                }),
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Failed to purchase item");
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log("Item purchased successfully:", data);
+
+                    // Check if it's the last item to display the thank you message
+                    if (index === cart.length - 1) {
+                        const thankYouMessage = document.createElement("p");
+                        thankYouMessage.textContent = "Thank you for your purchase!";
+                        thankYouMessage.style.color = "green";
+                        document.body.appendChild(thankYouMessage);
+
+                        // Reset cart and reload
+                        resetCart();
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error purchasing item:", error);
+                });
         });
-    });
 
-          // Reset cart and reload
-          resetCart();          
+        // Reset cart and reload
+        resetCart();
+
+    } else {
+        console.log("Cannot make purchase if not logged in.");
+        alert("Please log in to continue:");        
+        window.location.href = '/login';        
+    }
 }

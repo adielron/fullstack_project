@@ -81,8 +81,8 @@ export function createItem() {
                         <td>${response.price}</td>
                         <td>${response.stock}</td>
                         <td>
-                            <button class="edit-btn" data-id="${response.id}">Edit</button>
-                            <button class="delete-btn" data-id="${response.id}">Delete</button>
+                            <button class="edit-btn" data-id="${response.name}">Edit</button>
+                            <button class="delete-btn" data-id="${response.name}">Delete</button>
                         </td>
                     `);
                     tableBody.append(row);
@@ -113,6 +113,8 @@ export function addEditEventListener(editButton) {
         fetch(`http://localhost:3000/items/${itemId}`)
             .then(response => response.json())
             .then(item => {
+                console.log('Fetched item details:', item);
+
                 // Populate the form with current item details
                 document.getElementById('editItemId').value = item.id;
                 document.getElementById('editName').value = item.name;
@@ -120,9 +122,15 @@ export function addEditEventListener(editButton) {
                 document.getElementById('editDescription').value = item.description;
                 document.getElementById('editPrice').value = item.price;
                 document.getElementById('editStock').value = item.stock;
+                document.getElementById('editWeight').value = item.weight || '';
+                document.getElementById('editMadeIn').value = item.madeIn || '';
+                document.getElementById('editColor').value = item.color || '';
+                document.getElementById('editDistributor').value = item.distributor || '';
+                document.getElementById('editQuality').value = item.quality || '';
+                document.getElementById('editImg').value = item.img || '';
 
-                // Show the edit item form
-                document.getElementById('editItemForm').style.display = 'block';
+                // Show the edit item form and popup
+                document.getElementById('editItemPopup').style.display = 'block';
             })
             .catch(error => {
                 console.error('Error fetching item details:', error);
@@ -141,7 +149,13 @@ export function handleEditItemForm() {
             category: document.getElementById('editCategory').value,
             description: document.getElementById('editDescription').value,
             price: document.getElementById('editPrice').value,
-            stock: document.getElementById('editStock').value
+            stock: document.getElementById('editStock').value,
+            weight: document.getElementById('editWeight').value,
+            madeIn: document.getElementById('editMadeIn').value,
+            color: document.getElementById('editColor').value,
+            distributor: document.getElementById('editDistributor').value,
+            quality: document.getElementById('editQuality').value,
+            img: document.getElementById('editImg').value
         };
 
         fetch(`http://localhost:3000/items/${itemId}`, {
@@ -161,13 +175,15 @@ export function handleEditItemForm() {
         .then(updatedItem => {
             // Update the row with the new details
             const row = document.querySelector(`button.edit-btn[data-id="${itemId}"]`).closest('tr');
+            row.querySelector('td:nth-child(2)').textContent = updatedItem.category;
             row.querySelector('td:nth-child(3)').textContent = updatedItem.name;
             row.querySelector('td:nth-child(4)').textContent = updatedItem.description;
             row.querySelector('td:nth-child(5)').textContent = updatedItem.price;
             row.querySelector('td:nth-child(6)').textContent = updatedItem.stock;
 
-            // Hide the edit item form
-            document.getElementById('editItemForm').style.display = 'none';
+            // Hide the edit item form and popup
+            document.getElementById('editItemForm').reset();
+            document.getElementById('editItemPopup').style.display = 'none';
         })
         .catch(error => {
             console.error('Error updating item:', error);
@@ -212,12 +228,11 @@ document.getElementById('closePopupBtn').addEventListener('click', function () {
     document.getElementById('createItemPopup').style.display = 'none';
 });
 
-// Handle Close button click in the edit item form
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('closeEditPopupBtn').addEventListener('click', function() {
-        document.getElementById('editItemForm').style.display = 'none';
-    });
-});
-
 // Initialize the edit item form handling
 document.addEventListener('DOMContentLoaded', handleEditItemForm);
+
+// Handle Close button click in the edit item form
+document.getElementById('closeEditPopupBtn').addEventListener('click', function() {
+    document.getElementById('editItemForm').reset();
+    document.getElementById('editItemPopup').style.display = 'none';
+});

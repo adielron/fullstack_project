@@ -1,4 +1,4 @@
-import * as d3 from "https://d3js.org/d3.v6.min.js";
+// import * as d3 from "https://d3js.org/d3.v6.min.js";
 
 export async function fetchItems(groupByOption) {
     try {

@@ -9,28 +9,22 @@
   <script type="module">
     import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
     import { updateNavbarDisplay } from './navbar.js';
-    import { fetchAccountDetails } from './authenticationModule.js';
-    import { loadPurchaseHistory } from './purchaseModule.js';
+    import { loadOrderHistory } from './purchaseModule.js';
     // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
-    loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);
-    fetchAccountDetails();
-    loadPurchaseHistory();     
+    loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);    
+    loadOrderHistory();     
   </script>     
   <title>My Account</title>
 </head>
 <body>
 
-  <div id="navbar"></div>  
+  <div id="navbar"></div>
 
-<form id="myProfile" class="AREAForm">
-  <h2>My profile:</h2>   
-  <label id="userNameLabel"></label>
-  <label id="userRoleLabel"></label>  
-</form>
-<h2>My purchase history:</h2>   
-<table id="purchaseHistoryTable" class="AREATable">
+<h2>Order history:</h2>   
+<table id="orderHistoryTable" class="AREATable">
   <thead>
       <tr>
+          <th>Customer</th>
           <th>Name</th>
           <th>Description</th>
           <th>Date</th>

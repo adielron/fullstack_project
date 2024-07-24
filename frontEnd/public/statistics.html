@@ -7,11 +7,11 @@
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script type="module">
       import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
-      import { displayCartItemCount } from "./cartModule.js";
+      import { updateNavbarDisplay } from "./navbar.js";
       import { fetchItems } from "./statisticsModule.js";
 
       // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update cart item count
-      loadHTMLWithScriptAndCallback("navbar.html","navbar","navbar.js",displayCartItemCount);
+      loadHTMLWithScriptAndCallback("navbar.html","navbar","navbar.js",updateNavbarDisplay);
 
       // Add event listeners
       document
