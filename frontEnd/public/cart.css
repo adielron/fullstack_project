@@ -1,4 +1,5 @@
   .shop-item {
+    width: 600px;
     margin-bottom: 20px;
     padding: 10px;
     border: 1px solid #ccc;
@@ -11,12 +12,14 @@
     display: block;
     margin: 0 auto 10px;
   }
+  .shop-item h2,
   .shop-item h3 {
     text-align: center;
   }
   .shop-item p {
     font-family: 'AREAFont', sans-serif;
     margin-bottom: 5px;
+    text-align: center;
   }
   .shop-item button,
   .purchase-button {
