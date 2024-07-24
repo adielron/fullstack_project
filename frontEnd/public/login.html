@@ -9,55 +9,43 @@
   <script type="module">
     import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
     import { updateNavbarDisplay } from './navbar.js'; 
+    import { addLoginListener } from './authenticationModule.js';
     // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
-    loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);    
+    loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay); 
+    
+    // Add event listener for login event
+    $(document).ready(function() {
+    addLoginListener();
+    });   
   </script>  
   <title>Login to AREA</title>
 </head>
 <body>
 
-  <div id="navbar"></div>  
+  <div class="page-container">
+    <header>
+      <div id="navbar"></div>      
+    </header>
 
-  <form id="loginForm" class="AREAForm">
-    <h2>Login to AREA:</h2>
-    <label for="name">Username:</label>
-    <input type="text" id="name" name="name" required>
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
-    <button type="submit">Login</button>
-    <a href="/register.html">New user? Join us here!</a>    
-</form>
-<p id="errorMessage">Invalid username and/or password. Please try again.</p>
+    <main>
+      <form id="loginForm" class="AREAForm">
+        <h2>Login to AREA:</h2>
+        <label for="name">Username:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Login</button>
+        <a href="/register.html">New user? Join us here!</a>    
+    </form>
+    <p id="errorMessage">Invalid username and/or password. Please try again.</p>
+    </main>
 
-<script type="module">
-import { loginUser } from './authenticationModule.js';
-
-// Perform login based on credentials and authentication
-$(document).ready(function() {
-    $('#loginForm').submit(function(event) {
-        event.preventDefault();
-
-        var formData = {
-            username: $('#name').val(),
-            email: $('#email').val(),
-            password: $('#password').val()
-        };
-
-        // Perform login and return person to the previous page
-        loginUser(formData)
-            .then(() => {
-                console.log('Login successful');                
-                window.location.href = document.referrer;
-            })
-            .catch(error => {
-                console.error('Error during login:', error);
-                $('#errorMessage').show();                                    
-            });
-    });
-});
-</script>
-
+    <footer>
+      <p>AREA @ 2024</p>
+    </footer>
+  </div> 
+  
 </body>
 </html>

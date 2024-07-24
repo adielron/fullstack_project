@@ -1,80 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./cart.css" />
     <link rel="icon" type="image/png" href="/icons/logo.png" />
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
-      body {
-        font-family: Arial, sans-serif;        
-      }
-      h1 {
-        text-align: center;
-      }
-      .item {
-        margin-bottom: 20px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        background-color: #f9f9f9;
-      }
-      .item img {
-        max-width: 100px;
-        max-height: 100px;
-        display: block;
-        margin: 0 auto 10px;
-      }
-      .item h3 {
-        text-align: center;
-      }
-      .item p {
-        margin-bottom: 5px;
-      }
-      .item button {
-        display: block;
-        margin: 10px auto 0;
-        padding: 8px 16px;
-        font-size: 16px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />    
     <title>Shopping Cart</title>
   </head>
   <body>
-    <div id="navbar"></div>
-    <div id="cartContainer">
-      <h1>Your Shopping Cart</h1>
-      <div id="cartItems"></div>
-      <div id="cartControls">
-        <button id="purchaseAllButton" class="purchase-button">
-          Purchase All
-        </button>
-      </div>
+    <div class="page-container">
+      <header>
+        <div id="navbar"></div>        
+      </header>
+
+      <main>        
+        <div id="cartContainer">
+          <h1>Your Shopping Cart</h1>
+          <div id="cartControls">
+            <button id="purchaseAllButton" class="purchase-button">
+              Purchase All
+            </button>
+          </div>
+          <div id="cartItems"></div>          
+        </div>
+      </main>
+
+      <footer>
+        <p>AREA @ 2024</p>
+      </footer>
     </div>
+
     <script type="module">
-      
-    </script> 
-    <script type="module"> 
       import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
-      import { updateNavbarDisplay } from './navbar.js';
+      import { updateNavbarDisplay } from "./navbar.js";
       import { loadCartItems } from "./itemDisplayModule.js";
-      import { resetCart, setupPurchaseAllButton, displayCartItemCount } from "./cartModule.js";
-      
+      import {
+        resetCart,
+        setupPurchaseAllButton,
+        displayCartItemCount,
+      } from "./cartModule.js";
+
       // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
-      loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);    
+      loadHTMLWithScriptAndCallback(
+        "navbar.html",
+        "navbar",
+        "navbar.js",
+        updateNavbarDisplay
+      );
 
       // Add listener events for cart loading and updating
-      document.addEventListener("DOMContentLoaded", () => {        
-        loadCartItems();        
+      document.addEventListener("DOMContentLoaded", () => {
+        loadCartItems();
         setupPurchaseAllButton();
-    });      
-      document.addEventListener('itemRemoved', loadCartItems);
-      document.addEventListener('cartReset', loadCartItems);
-      
+      });
+      document.addEventListener("itemRemoved", loadCartItems);
+      document.addEventListener("cartReset", loadCartItems);
     </script>
   </body>
 </html>

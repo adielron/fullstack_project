@@ -3,42 +3,57 @@
 export const showLinksEvent = new Event('showLinks');
 export const hideLinksEvent = new Event('hideLinks');
 
-// Check authentication
-export function checkAuthentication() {
-    fetch('http://localhost:3000/auth/status', {
+const restrictedPages = ['items','items.html','myAccount','myAccount.html','orders','orders.html','statistics','statistics.html'];
+
+// Fetch authentication data
+export function fetchAuthenticationStatus() {
+    return fetch('http://localhost:3000/auth/status', {
         method: 'GET',
         credentials: 'include',
         headers: {
             'Accept': 'application/json'
         }
     })
-        .then(response => {
-            if (!response.ok) {
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to check authentication status');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Authentication status:', data);
+        return data;            
+    })
+    .catch(error => {
+        console.error('Error checking authentication status:', error);
+        return null;
+    });
+}
+
+// Check authentication status
+export function checkAuthentication() {
+    fetchAuthenticationStatus()
+        .then(data => {
+            if (!data) {
                 throw new Error('Failed to check authentication status');
             }
-            return response.json();
-        })
-        .then(data => {
+
             console.log('Authentication status:', data);
 
             // Update the navbar based on the authentication status
             var authStatusElement = document.getElementById('authStatus');
-
+                                    
             if (authStatusElement) {
                 if (data.isAuthenticated) {
-                    console.log('User is authenticated');
-                    localStorage.setItem('isAuthenticated', data.user._id);
-                    localStorage.setItem('userRole', data.user.role);
-                    authStatusElement.innerHTML = '<a id="managerLink" href="/myAccount.html"><img src="/icons/login.png" alt="MyAccount"><b>My account</b></a> | <a id="logoutLink" href="#">Logout</a>';
-                    addLogoutListener();
-                    document.dispatchEvent(showLinksEvent);
-                } else {
+                    console.log('User is authenticated');                    
+                    setAuthentication(data);                            
+                } else {                    
                     console.log('User is not authenticated');
-                    localStorage.removeItem('isAuthenticated');
-                    localStorage.removeItem('userRole');
-                    authStatusElement.innerHTML = '<a href="/login.html"><img src="/icons/login.png" alt="Login">Login</a>';
-                    document.dispatchEvent(hideLinksEvent);
-                }
+                    removeAuthentication();                    
+                }           
+                // Update display and restrictions based on authentication
+                updateDisplay(data, authStatusElement);
+                checkRestrictions(data); 
             } else {
                 console.error('authStatus element not found');
             }
@@ -47,6 +62,178 @@ export function checkAuthentication() {
             console.error('Error checking authentication status:', error);
         });
 }
+
+// Get authentication from local storage
+export function getAuthentication() {
+    const userId = localStorage.getItem('isAuthenticated');
+    const userRole = localStorage.getItem('userRole');
+
+    if (userId && userRole) {
+        return {
+            isAuthenticated: true,
+            userId: userId,
+            userRole: userRole
+        };
+    } else {
+        return {
+            isAuthenticated: false,
+            userId: null,
+            userRole: null
+        };
+    }
+}
+
+// Set authentication in local storage
+export function setAuthentication(data) {
+    localStorage.setItem('isAuthenticated', data.user._id);
+    localStorage.setItem('userRole', data.user.role);    
+}
+
+// Remove authentication from local storage
+export function removeAuthentication() {
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userRole');   
+}
+
+// Update display based on authentication
+export function updateDisplay(data, authStatusElement) {
+    // If authenticated, update account and logout    
+    if (data.isAuthenticated) {                                                                   
+        authStatusElement.innerHTML = '<a id="managerLink" href="/myAccount.html"><img src="/icons/login.png" alt="MyAccount"><b>My account</b></a> | <a id="logoutLink" href="#">Logout</a>';                                     
+        addLogoutListener(); 
+        // If the user is authenticated and a manager, display restricted pages
+        if (data.user.role == 'manager') {
+            document.dispatchEvent(showLinksEvent); 
+        }                                                                             
+    } else {
+        // Revert to unauthorized state
+        authStatusElement.innerHTML = '<a href="/login.html"><img src="/icons/login.png" alt="Login">Login</a>';
+        document.dispatchEvent(hideLinksEvent);                    
+    }  
+}
+
+// Check if entering restricted pages unauthorized
+export function checkRestrictions(data){
+    
+    // Get current page 
+    const currentPage = window.location.pathname.split("/").pop();
+
+    // If the page is restricted and the user is not authenticated or does not follow the requirements, redirect to main page      
+    if (restrictedPages.includes(currentPage)) {       
+        if ((data.isAuthenticated && data.user.role !== 'manager' && currentPage !== 'myAccount.html') || (!data.isAuthenticated)) {
+            window.location.href = 'shop.html';
+            return;
+        }
+    }    
+}
+
+// Handle login process
+export function handleLogin(formData) {
+    return fetch('http://localhost:3000/auth/login', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to log in');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Login response data:', data);
+        // Set local storage
+        if (data.isAuthenticated) {            
+            setAuthentication(data);
+            window.location.href = '/';
+        }
+    })
+    .catch(error => {
+        console.error('Error during login:', error);
+        throw error;
+    });
+}
+
+// Handle logout process
+function handleLogout(event) {
+    event.preventDefault(); 
+    
+    fetch('http://localhost:3000/auth/logout', {
+        method: 'GET',
+        credentials: 'include', // Include credentials (cookies)
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+        .then(() => {
+            console.log('Logged out successfully.');
+            // Clear local storage
+            removeAuthentication();
+            window.location.href = '/';
+        })
+        .catch(error => {
+            console.error('Error logging out:', error);
+        });    
+}
+
+// Add login listener
+export function addLoginListener() {
+    $('#loginForm').submit(function(event) {
+        event.preventDefault();
+
+        var formData = {
+            username: $('#name').val(),
+            email: $('#email').val(),
+            password: $('#password').val()
+        };
+
+        // Perform login and return the person to the previous page
+        handleLogin(formData)
+            .then(() => {
+                console.log('Login successful');                
+                window.location.href = document.referrer;
+            })
+            .catch(error => {
+                console.error('Error during login:', error);
+                $('#errorMessage').show();                                    
+            });
+    });
+}
+
+// Add logout listener
+export function addLogoutListener() {
+    var logoutLink = document.getElementById('logoutLink');
+    if (logoutLink) {
+        logoutLink.addEventListener('click', handleLogout);
+    } else {
+        console.error('Logout link not found');
+    }
+}
+
+// Add show and hide restricted pages listeners
+document.addEventListener('showLinks', () => {
+    var ordersLink = document.getElementById('ordersLink');
+    var itemsLink = document.getElementById('itemsLink');
+    var statisticsLink = document.getElementById('statisticsLink');
+
+    ordersLink.classList.add('visible');
+    itemsLink.classList.add('visible');
+    statisticsLink.classList.add('visible');
+});
+
+document.addEventListener('hideLinks', () => {
+    var ordersLink = document.getElementById('ordersLink');
+    var itemsLink = document.getElementById('itemsLink');
+    var statisticsLink = document.getElementById('statisticsLink');
+
+    ordersLink.classList.remove('visible');
+    itemsLink.classList.remove('visible');
+    statisticsLink.classList.remove('visible');
+});
 
 // Fetch account details
 export function fetchAccountDetails() {
@@ -65,6 +252,7 @@ export function fetchAccountDetails() {
         })
         .then(data => {
             // Update labels with user details
+            console.log(data);
             var userNameLabel = document.getElementById('userNameLabel');
             var userRoleLabel = document.getElementById('userRoleLabel');
 
@@ -74,126 +262,8 @@ export function fetchAccountDetails() {
             } else {
                 console.error('Labels not found');
             }
-
-            // Fetch and display purchase history
-            fetchPurchaseHistory(data.user._id);
-
         })
         .catch(error => {
             console.error('Error fetching user details:', error);
         });
 }
-
-// Function to fetch purchase history
-export function fetchPurchaseHistory(userId) {
-    console.log('Fetching purchase history for user ID:', userId);
-
-    fetch(`http://localhost:3000/purchase/history/${userId}`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-            'Accept': 'application/json'
-        }
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch purchase history');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Purchase history data:', data);
-
-            var purchaseHistoryContainer = document.getElementById('purchaseHistoryContainer');
-
-            if (purchaseHistoryContainer) {
-                if (data.history && data.history.length > 0) {
-                    data.history.forEach(purchase => {
-                        var purchaseItem = document.createElement('div');
-                        purchaseItem.textContent = `Date: ${purchase.date}, Item: ${purchase.item}, Amount: ${purchase.amount}`;
-                        purchaseHistoryContainer.appendChild(purchaseItem);
-                    });
-                } else {
-                    purchaseHistoryContainer.textContent = 'No purchase history available.';
-                }
-            } else {
-                console.error('Purchase history container not found');
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching purchase history:', error);
-        });
-}
-
-// Perform login operation
-export function loginUser(credentials) {
-    return fetch('http://localhost:3000/auth/login', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(credentials)
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Login failed');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.isAuthenticated) {
-                checkAuthentication();
-                window.location.href = '/';
-            }
-        })
-        .catch(error => {
-            console.error('Error during login:', error);
-            throw error;
-        });
-}
-
-// Add logout listener
-export function addLogoutListener() {
-    var logoutLink = document.getElementById('logoutLink');
-    if (logoutLink) {
-        logoutLink.addEventListener('click', function (event) {
-            event.preventDefault();
-
-            // Clear local storage
-            localStorage.removeItem('isAuthenticated');
-            localStorage.removeItem('userRole');
-            fetch('http://localhost:3000/auth/logout', {
-                method: 'GET',
-                credentials: 'include', // Include credentials (cookies)
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-                .then(() => {
-                    window.location.href = '/';
-                })
-                .catch(error => {
-                    console.error('Error logging out:', error);
-                });
-        });
-    } else {
-        console.error('Logout link not found');
-    }
-}
-
-document.addEventListener('showLinks', () => {
-    var itemsLink = document.getElementById('itemsLink');
-    var statisticsLink = document.getElementById('statisticsLink');
-
-    itemsLink.classList.add('visible');
-    statisticsLink.classList.add('visible');
-});
-
-document.addEventListener('hideLinks', () => {
-    var itemsLink = document.getElementById('itemsLink');
-    var statisticsLink = document.getElementById('statisticsLink');
-
-    itemsLink.classList.remove('visible');
-    statisticsLink.classList.remove('visible');
-});

@@ -1,4 +1,4 @@
-import * as d3 from "https://d3js.org/d3.v6.min.js";
+// import * as d3 from "https://d3js.org/d3.v6.min.js";
 
 export async function fetchItems(groupByOption) {
     try {
@@ -6,10 +6,10 @@ export async function fetchItems(groupByOption) {
         const items = await response.json();
         console.log('Fetched items:', items);
         displayItems(items);
-        renderGraphs(items);        
+        renderGraphs(items);
     } catch (error) {
         console.error('Error fetching items:', error);
-    }    
+    }
 }
 
 export function displayItems(items) {
@@ -30,27 +30,12 @@ export function displayItems(items) {
     }
 }
 
+// Render graphs based on items data
 export function renderGraphs(items) {
-    const selectedCategory = document.getElementById("groupByOption").value;
-    console.log('Rendering graphs with items:', items, 'and selected category:', selectedCategory);
+    console.log('Rendering graphs with items:', items);
 
-    // Check for missing properties and log them
-    items.forEach((item, index) => {
-        if (typeof item.totalItems !== 'number' || isNaN(item.totalItems)) {
-            console.warn(`Item at index ${index} has invalid totalItems:`, item);
-        }
-        if (typeof item[selectedCategory] !== 'string' || !item[selectedCategory]) {
-            console.warn(`Item at index ${index} has invalid ${selectedCategory}:`, item);
-        }
-    });
-
-    // Filter out items without valid totalItems or selectedCategory
-    const validItems = items.filter(item => typeof item.totalItems === 'number' && !isNaN(item.totalItems) &&
-                                            typeof item[selectedCategory] === 'string' && item[selectedCategory]);
-
-    const validTotalItems = validItems.map(item => item.totalItems);
-    const categories = validItems.map(item => item[selectedCategory]);
-    const itemNames = validItems.map(item => item.name);
+    const categories = items.map(item => item._id);
+    const totalItems = items.map(item => item.totalItems);
 
     // Clear previous graphs
     d3.select("#graph1").selectAll("*").remove();
@@ -58,8 +43,8 @@ export function renderGraphs(items) {
 
     // Graph 1: Bar chart for item totalItems
     const margin = { top: 20, right: 30, bottom: 40, left: 40 },
-          width = 600 - margin.left - margin.right,
-          height = 400 - margin.top - margin.bottom;
+        width = 600 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
 
     // Create the SVG container and set the origin
     const svg1 = d3.select("#graph1")
@@ -71,20 +56,23 @@ export function renderGraphs(items) {
 
     // X scale
     const x = d3.scaleBand()
-        .domain(itemNames)
+        .domain(categories)
         .range([0, width])
         .padding(0.1);
 
     // Y scale
     const y = d3.scaleLinear()
-        .domain([0, d3.max(validTotalItems)])
+        .domain([0, d3.max(totalItems)])
         .nice()
         .range([height, 0]);
 
     // Add X axis
     svg1.append("g")
         .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x));
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .attr("transform", "rotate(-45)")
+        .style("text-anchor", "end");
 
     // Add Y axis
     svg1.append("g")
@@ -92,36 +80,31 @@ export function renderGraphs(items) {
 
     // Bars
     svg1.selectAll(".bar")
-        .data(validItems)
+        .data(items)
         .enter()
         .append("rect")
         .attr("class", "bar")
-        .attr("x", d => x(d.name))
+        .attr("x", d => x(d._id))
         .attr("y", d => y(d.totalItems))
         .attr("width", x.bandwidth())
         .attr("height", d => height - y(d.totalItems))
-        .append("title")
-        .text(d => `${d.totalItems}`);
+        .attr("fill", "steelblue");
 
     // Add labels
     svg1.selectAll(".label")
-        .data(validItems)
+        .data(items)
         .enter()
         .append("text")
         .attr("class", "label")
-        .attr("x", d => x(d.name) + x.bandwidth() / 2)
+        .attr("x", d => x(d._id) + x.bandwidth() / 2)
         .attr("y", d => y(d.totalItems) - 5)
+        .attr("text-anchor", "middle")
         .text(d => `${d.totalItems}`);
 
     // Graph 2: Pie chart for selected category distribution
-    const categoryCount = categories.reduce((acc, category) => {
-        acc[category] = (acc[category] || 0) + 1;
-        return acc;
-    }, {});
-
-    const pieData = Object.keys(categoryCount).map(category => ({
-        category: category,
-        count: categoryCount[category]
+    const pieData = items.map(item => ({
+        category: item._id,
+        count: item.totalItems
     }));
 
     const svg2 = d3.select("#graph2")
@@ -136,6 +119,17 @@ export function renderGraphs(items) {
     const pie = d3.pie().value(d => d.count);
     const arc = d3.arc().innerRadius(0).outerRadius(radius);
 
+    // Define color scheme
+    const colorScheme = [
+        '#0E1B3D',
+        '#263451', 
+        '#3F4D65', 
+        '#576779',
+        '#6F808D',
+        '#8899A1',
+        '#A0B2B5',
+    ];
+
     const arcs = svg2.selectAll("arc")
         .data(pie(pieData))
         .enter()
@@ -144,10 +138,11 @@ export function renderGraphs(items) {
 
     arcs.append("path")
         .attr("d", arc)
-        .attr("fill", d => d3.schemeCategory10[d.index]);
+        .attr("fill", (d, i) => colorScheme[i % colorScheme.length]);
 
     arcs.append("text")
         .attr("transform", d => `translate(${arc.centroid(d)})`)
         .attr("text-anchor", "middle")
+        .attr("fill", "white")
         .text(d => `${d.data.category} (${d.data.count})`);
 }

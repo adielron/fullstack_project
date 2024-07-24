@@ -1,36 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="./shop.css" />
     <link rel="icon" type="image/png" href="/icons/logo.png" />
+    <link rel="stylesheet" href="./shop.css" />
+    <link rel="stylesheet" href="./styles.css" />    
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AREA</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
   </head>
   <body>
-    <div id="navbar"></div>
-    <div id="authStatus"></div>
+    <div class="page-container">
+      <header>
+        <div id="navbar"></div>
+        <div id="authStatus"></div>
+      </header>
 
-    <h1>Shop</h1>
+      <main>
+        <h1> </h1>
+        <div class="shop-item-container" id="itemContainer">          
+        </div>
+      </main>
 
-    <div class="item-container" id="itemContainer"></div>
+      <footer>
+        <p>AREA @ 2024</p>
+      </footer>
+    </div>
 
-    <!-- Containers for the graphs -->
-
-    <style>
-      .bar {
-        fill: steelblue;
-      }
-      .bar:hover {
-        fill: orange;
-      }
-      .label {
-        font-size: 12px;
-        fill: black;
-        text-anchor: middle;
-      }
-    </style>
     <script type="module">
       import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
       import { updateNavbarDisplay } from './navbar.js';
@@ -39,6 +35,6 @@
       // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
       loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);
       fetchItems();
-    </script>    
+    </script>
   </body>
 </html>

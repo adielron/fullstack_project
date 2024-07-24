@@ -9,6 +9,7 @@
     <script type="module">
       import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
       import { updateNavbarDisplay } from "./navbar.js";
+      import { loadOrderHistory } from "./purchaseModule.js";
       // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
       loadHTMLWithScriptAndCallback(
         "navbar.html",
@@ -16,8 +17,9 @@
         "navbar.js",
         updateNavbarDisplay
       );
+      loadOrderHistory();
     </script>
-    <title>About AREA</title>
+    <title>My Account</title>
   </head>
   <body>
     <div class="page-container">
@@ -26,24 +28,22 @@
       </header>
 
       <main>
-        <form id="about" class="AREAAbout">
-          <h2>About AREA</h2>
-          <h3>The project was made by:</h3>
-          <label>Adi Elron</label>
-          <label>Raz Diamond</label>
-          <label>Elor Itzkovitz</label>
-          <label>Adi Cahli</label>
-        </form>
+        <h2>Order history:</h2>
+        <table id="orderHistoryTable" class="AREATable">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Date</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Purchase history will be populated here -->
+          </tbody>
+        </table>
       </main>
-      <aside>
-        <h2>Links</h2>
-        <ul>
-          <li><a href="https://github.com/adielron/fullstack_project">GitHub</a></li>          
-        </ul>
-        <ul>
-          <li><a href="https://fonts.google.com/specimen/Roboto">Font used in the project</a></li>
-        </ul>
-      </aside>
 
       <footer>
         <p>AREA @ 2024</p>
