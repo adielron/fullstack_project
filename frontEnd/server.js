@@ -45,6 +45,10 @@ app.get('/myAccount', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'myAccount.html'));
 });
 
+app.get('/orders', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'orders.html'));
+});
+
 app.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'register.html'));
 });
