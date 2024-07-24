@@ -29,15 +29,7 @@ export async function displayItems(items, container, callbackFunc) {
 
             const img = document.createElement("img");
             img.src = item.img;
-            img.alt = item.name;            
-
-            img.addEventListener("mouseover", () => {
-                descriptionPopup.style.display = 'block';
-            });
-
-            img.addEventListener("mouseout", () => {
-                descriptionPopup.style.display = 'none';
-            });
+            img.alt = item.name;
 
             const name = document.createElement("h3");
             name.textContent = item.name;
@@ -61,8 +53,7 @@ export async function displayItems(items, container, callbackFunc) {
             // Add event listener to toggle the visibility of the popup
             viewDetailsButton.addEventListener("click", (event) => {
                 const popup = event.currentTarget.nextElementSibling;
-                popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
-                positionPopup(event.currentTarget);
+                popup.style.display = popup.style.display === 'block' ? 'none' : 'block';                
             });
 
             const button = document.createElement("button");
@@ -80,14 +71,6 @@ export async function displayItems(items, container, callbackFunc) {
             container.appendChild(itemDiv);
         });
     }
-}
-
-// Align popup position
-function positionPopup(button) {
-    const popup = button.nextElementSibling;
-    const rect = button.getBoundingClientRect();
-    popup.style.top = `${rect.bottom + window.scrollY}px`;
-    popup.style.left = `${rect.left + window.scrollX}px`;
 }
 
 // Load cart items
