@@ -6,6 +6,7 @@ const customerController = require('../controllers/customerController');
 
 // Routes for customers
 router.get('/', customerController.getAllCustomers);
+router.get('/find-username-or-email', customerController.findCustomerByUsernameOrEmail);
 router.get('/one', customerController.getCustomerByEmail);
 router.post('/', customerController.createCustomer);
 router.put('/:email', customerController.updateCustomer);

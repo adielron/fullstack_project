@@ -15,6 +15,7 @@ router.get('/purchases', managerController.getAllPurchasesByManager); // Get all
 router.get('/:email', managerController.getManagerByEmail); // Get manager by email
 
 router.get('/', managerController.getAllManagers);
+router.get('/find-username-or-email', managerController.findManagerByUsernameOrEmail);
 router.post('/', managerController.createManager);
 router.put('/:email', managerController.updateManager); // Update manager by email
 router.delete('/:email', managerController.deleteManager); // Delete manager by email
