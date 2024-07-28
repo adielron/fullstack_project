@@ -27,18 +27,36 @@ exports.getAllManagers = async (req, res) => {
   }
 };
 
-exports.getManagerByEmail = async (req, res) => {
+// Get manager by username or email
+exports.findManagerByUsernameOrEmail = async (req, res) => {
   try {
-    const email  = req.params.email;
-    const manager = await Manager.findOne({ email });
-    if (!manager) {
-      return res.status(404).json({ message: 'Manager not found' });
+    const { username, email } = req.body;
+    console.log(username, email);
+    const manager = await Manager.findOne({ $or: [{ username }, { email }] });
+    if (manager) {      
+      return res.status(409).json({ message: 'Username or email already exists' });
     }
-    res.json(manager);
-  } catch (err) {
+    
+  } catch (err) {    
     res.status(500).json({ message: err.message });
   }
 };
+
+// Get manager by email
+exports.getManagerByEmail = async (req, res) => {
+    try {
+      const { email } = req.query;
+      console.log(email);
+      const manager = await Manager.findOne({ email });
+  
+      if (!manager) {
+        return res.status(404).json({ message: 'Manager not found' });
+      }
+      res.json(manager);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  };
 
 exports.createManager = async (req, res) => {
   const newManager = new Manager(req.body);
