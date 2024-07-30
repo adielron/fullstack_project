@@ -22,15 +22,15 @@ export function loadItemTableData() {
             items.forEach(item => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${item.id}</td>
+                    <td>${item._id}</td>
                     <td>${item.category}</td>
                     <td>${item.name}</td>
                     <td>${item.description}</td>
                     <td>${item.price}</td>
                     <td>${item.stock}</td>
                     <td>
-                        <button class="edit-btn" data-id="${item.id}">Edit</button>
-                        <button class="delete-btn" data-id="${item.id}">Delete</button>
+                        <button class="edit-btn" data-id="${item._id}">Edit</button>
+                        <button class="delete-btn" data-id="${item._id}">Delete</button>
                     </td>
                 `;
                 tableBody.appendChild(row);
@@ -53,28 +53,34 @@ export function createItem() {
 
             const authStatus = getAuthentication();
 
-            // Check if the user is authenticated as a manager
-            if (!authStatus.isAuthenticated || authStatus.userRole !== 'manager') {
-                $('#errorMessage').text('You must be a manager to add items.').show();
-                return;
-            }
-
-            // Serialize the form data
-            var formData = $(this).serialize();
-
-            // Send a POST request to the backend
-            $.ajax({
-                type: 'POST',
-                url: 'http://localhost:3000/items',
-                data: formData,
-                contentType: 'application/x-www-form-urlencoded',
-                xhrFields: {
-                    withCredentials: true
-                },
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
+                       // Check if the user is authenticated as a manager
+                       if (!authStatus.isAuthenticated || authStatus.userRole !== 'manager') {
+                        $('#errorMessage').text('You must be a manager to add items.').show();
+                        return;
+                    }
+        
+                    var jsonData = {};
+                    $('#createItemForm').find('input, textarea, select').each(function() {
+                        jsonData[this.name] = $(this).val();
+                    });
+                    
+                    // Handle checkbox separately
+                    jsonData.publishToFacebook = $('#publishToFacebook').is(':checked');
+        
+        
+                    // Send a POST request to the backend
+                    $.ajax({
+                        type: 'POST',
+                        url: 'http://localhost:3000/items',
+                        data: JSON.stringify(jsonData),
+                        contentType: 'application/json',
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
                 success: function (response) {
                     // Handle the successful response
                     $('#errorMessage').hide();
@@ -84,15 +90,15 @@ export function createItem() {
                     // Add the new item to the table
                     const tableBody = $('#itemsTable tbody');
                     const row = $('<tr>').html(`
-                        <td>${response.id}</td>
+                        <td>${response._id}</td>
                         <td>${response.category}</td>
                         <td>${response.name}</td>
                         <td>${response.description}</td>
                         <td>${response.price}</td>
                         <td>${response.stock}</td>
                         <td>
-                            <button class="edit-btn" data-id="${response.id}">Edit</button>
-                            <button class="delete-btn" data-id="${response.id}">Delete</button>
+                            <button class="edit-btn" data-id="${response._id}">Edit</button>
+                            <button class="delete-btn" data-id="${response._id}">Delete</button>
                         </td>
                     `);
                     tableBody.append(row);
@@ -134,7 +140,7 @@ export function addEditEventListener(editButton) {
                 console.log('Fetched item details:', item);
 
                 // Populate the form with current item details
-                document.getElementById('editItemId').value = item.id;
+                document.getElementById('editItemId').value = item._id;
                 document.getElementById('editName').value = item.name || '';
                 document.getElementById('editCategory').value = item.category || '';
                 document.getElementById('editDescription').value = item.description || '';
@@ -197,15 +203,15 @@ export function handleEditItemForm() {
                     // Update the table row with the new details
                     const row = $(`button.edit-btn[data-id="${itemId}"]`).closest('tr');
                     row.html(`
-                        <td>${response.id}</td>
+                        <td>${response._id}</td>
                         <td>${response.category}</td>
                         <td>${response.name}</td>
                         <td>${response.description}</td>
                         <td>${response.price}</td>
                         <td>${response.stock}</td>
                         <td>
-                            <button class="edit-btn" data-id="${response.id}">Edit</button>
-                            <button class="delete-btn" data-id="${response.id}">Delete</button>
+                            <button class="edit-btn" data-id="${response._id}">Edit</button>
+                            <button class="delete-btn" data-id="${response._id}">Delete</button>
                         </td>
                     `);
 
@@ -230,7 +236,6 @@ export function handleEditItemForm() {
 export function addDeleteEventListener(deleteButton) {
     deleteButton.addEventListener('click', function () {
         const itemId = this.getAttribute('data-id');
-
         const authStatus = getAuthentication();
 
         // Check if the user is authenticated as a manager
