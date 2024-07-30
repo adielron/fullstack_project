@@ -25,11 +25,19 @@ exports.getItemById = async (req, res) => {
 };
 
 exports.createItem = async (req, res) => {
-  console.log("creating item");
-  const newItem = new Item(req.body);
+  console.log("Creating item");
+  const { publishToFacebook, ...itemData } = req.body;
+  const newItem = new Item(itemData);
+
   try {
     const savedItem = await newItem.save();
-    res.status(201).json(savedItem);
+
+    let facebookPostId = null;
+    if (publishToFacebook) {
+      facebookPostId = await postToFacebook(savedItem);
+    }
+
+    res.status(201).json({ ...savedItem.toObject(), facebookPostId });
   } catch (err) {
     console.log(err);
     res.status(400).json({ message: err.message });
@@ -37,6 +45,7 @@ exports.createItem = async (req, res) => {
 };
 
 exports.updateItem = async (req, res) => {
+  console.log('Attempting to update item with id:',req.params.id );
   try {
     const updatedItem = await Item.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedItem) {
@@ -49,8 +58,9 @@ exports.updateItem = async (req, res) => {
 };
 
 exports.deleteItem = async (req, res) => {
+  console.log('Attempting to delete item with id:',req.params.id );
   try {
-    console.log(req.params.id);
+    
     const deletedItem = await Item.findByIdAndDelete(req.params.id);
     if (!deletedItem) {
       return res.status(404).json({ message: 'Item not found' });
@@ -142,3 +152,23 @@ exports.groupItemsByDynamicCriteria = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+const axios = require('axios');
+const PAGE_ID=process.env.PAGE_ID;
+const ACCESS_TOKEN=process.env.ACCESS_TOKEN;
+
+async function postToFacebook(item) {
+  const MESSAGE = "New item in our store: "+item.name;
+  const url = `https://graph.facebook.com/v20.0/${PAGE_ID}/photos?message=${MESSAGE}&&access_token=${ACCESS_TOKEN}`;
+
+  const data = {
+      "url":item.img
+  };
+
+  try {
+      const response = await axios.post(url,data);
+      console.log('Post ID:', response.data.id);
+  } catch (error) {
+      console.error('Error posting on Facebook:', error.response ? error.response.data : error.message);
+  }
+  };
