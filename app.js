@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: false })) // parse application/x-www-f
 app.use(cookieSession({
   name: 'app-auth',
   keys: ['secret new','secret-old'],
-  maxAge: 60 * 60 * 24,
+  maxAge: 60 * 60 * 24 * 1000,
   sameSite: 'strict' // Set the sameSite attribute
 }));
 
