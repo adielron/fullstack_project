@@ -1,8 +1,17 @@
+// Module for item management
 
 import { getAuthentication } from './authenticationModule.js';
 
 // Load table items
 export function loadItemTableData() {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const tableBody = document.querySelector('#itemsTable tbody');
+    const tableElements = document.getElementsByClassName('AREATable');
+
+    // Show loading indicator
+    loadingIndicator.style.display = 'block';
+    tableBody.innerHTML = ''; // Clear previous data
+
     fetch('http://localhost:3000/items')
         .then(response => {
             if (!response.ok) {
@@ -11,7 +20,6 @@ export function loadItemTableData() {
             return response.json();
         })
         .then(items => {
-            const tableBody = document.querySelector('#itemsTable tbody');
             tableBody.innerHTML = '';
 
             if (items.length === 0) {
@@ -22,15 +30,16 @@ export function loadItemTableData() {
             items.forEach(item => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${item.id}</td>
+                    <td>${item._id}</td>
+                    <td><img src="${item.img}" alt="${item.name}" style="width: 50px; height: auto;"></td>
                     <td>${item.category}</td>
                     <td>${item.name}</td>
                     <td>${item.description}</td>
                     <td>${item.price}</td>
                     <td>${item.stock}</td>
                     <td>
-                        <button class="edit-btn" data-id="${item.id}">Edit</button>
-                        <button class="delete-btn" data-id="${item.id}">Delete</button>
+                        <button class="edit-btn" data-id="${item._id}">Edit</button>
+                        <button class="delete-btn" data-id="${item._id}">Delete</button>
                     </td>
                 `;
                 tableBody.appendChild(row);
@@ -40,10 +49,49 @@ export function loadItemTableData() {
                 addDeleteEventListener(row.querySelector('.delete-btn'));
             });
         })
+        .finally(() => {
+            // Hide loading indicator and show AREATable elements
+            loadingIndicator.style.display = 'none';
+            for (let element of tableElements) {
+                element.style.display = 'table';
+            }
+        })
         .catch(error => {
             console.error('Error fetching items:', error);
+            loadingIndicator.textContent = 'Error loading data';
         });
 }
+
+// Function to filter table items based on search input
+export function filterTableItems(query) {
+    const tableBody = document.querySelector('#itemsTable tbody');
+    const rows = tableBody.querySelectorAll('tr');
+
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const itemName = cells[2].textContent.toLowerCase();
+        const itemDescription = cells[3].textContent.toLowerCase();
+        
+        if (itemName.includes(query.toLowerCase()) || itemDescription.includes(query.toLowerCase())) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+// Event listener for search input
+document.getElementById('searchInput').addEventListener('input', (event) => {
+    const query = event.target.value.trim();
+    filterTableItems(query);
+});
+
+// Handle reset query
+document.getElementById("resetButton").addEventListener("click", () => { 
+    const searchInput = document.getElementById('searchInput');  
+    searchInput.value = "";
+    loadItemTableData();
+});
 
 // Create new item
 export function createItem() {
@@ -59,21 +107,27 @@ export function createItem() {
                 return;
             }
 
-            // Serialize the form data
-            var formData = $(this).serialize();
+            var jsonData = {};
+            $('#createItemForm').find('input, textarea, select').each(function () {
+                jsonData[this.name] = $(this).val();
+            });
+
+            // Handle checkbox separately
+            jsonData.publishToFacebook = $('#publishToFacebook').is(':checked');
+
 
             // Send a POST request to the backend
             $.ajax({
                 type: 'POST',
                 url: 'http://localhost:3000/items',
-                data: formData,
-                contentType: 'application/x-www-form-urlencoded',
+                data: JSON.stringify(jsonData),
+                contentType: 'application/json',
                 xhrFields: {
                     withCredentials: true
                 },
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'application/json'
                 },
                 success: function (response) {
                     // Handle the successful response
@@ -84,15 +138,16 @@ export function createItem() {
                     // Add the new item to the table
                     const tableBody = $('#itemsTable tbody');
                     const row = $('<tr>').html(`
-                        <td>${response.id}</td>
+                        <td>${response._id}</td>
+                        <td><img src="${item.img}" alt="${item.name}" style="width: 50px; height: auto;"></td>
                         <td>${response.category}</td>
                         <td>${response.name}</td>
                         <td>${response.description}</td>
                         <td>${response.price}</td>
                         <td>${response.stock}</td>
                         <td>
-                            <button class="edit-btn" data-id="${response.id}">Edit</button>
-                            <button class="delete-btn" data-id="${response.id}">Delete</button>
+                            <button class="edit-btn" data-id="${response._id}">Edit</button>
+                            <button class="delete-btn" data-id="${response._id}">Delete</button>
                         </td>
                     `);
                     tableBody.append(row);
@@ -134,7 +189,7 @@ export function addEditEventListener(editButton) {
                 console.log('Fetched item details:', item);
 
                 // Populate the form with current item details
-                document.getElementById('editItemId').value = item.id;
+                document.getElementById('editItemId').value = item._id;
                 document.getElementById('editName').value = item.name || '';
                 document.getElementById('editCategory').value = item.category || '';
                 document.getElementById('editDescription').value = item.description || '';
@@ -197,15 +252,16 @@ export function handleEditItemForm() {
                     // Update the table row with the new details
                     const row = $(`button.edit-btn[data-id="${itemId}"]`).closest('tr');
                     row.html(`
-                        <td>${response.id}</td>
+                        <td>${response._id}</td>
+                        <td><img src="${response.img}" alt="${response.name}" style="width: 50px; height: auto;"></td>
                         <td>${response.category}</td>
                         <td>${response.name}</td>
                         <td>${response.description}</td>
                         <td>${response.price}</td>
                         <td>${response.stock}</td>
                         <td>
-                            <button class="edit-btn" data-id="${response.id}">Edit</button>
-                            <button class="delete-btn" data-id="${response.id}">Delete</button>
+                            <button class="edit-btn" data-id="${response._id}">Edit</button>
+                            <button class="delete-btn" data-id="${response._id}">Delete</button>
                         </td>
                     `);
 

@@ -16,7 +16,7 @@ function includeNavbar() {
             // Insert the navbar HTML into the specified element
             var navbarElement = document.getElementById('navbar');
             if (navbarElement) {
-                navbarElement.innerHTML = html;                
+                navbarElement.innerHTML = html;
             } else {
                 console.error('Navbar element not found');
             }
@@ -24,13 +24,14 @@ function includeNavbar() {
         .catch(error => console.error('Error fetching navbar:', error));
 }
 
-// Call the function to include the navbar content when the page loads
+// Ensure all elements are loaded before running scripts
 window.onload = function() {
     includeNavbar();
+    //initializeSearch();
 };
 
 // Check authentication status and cart item count after including the navbar
-export function updateNavbarDisplay(){    
+export function updateNavbarDisplay() {
     checkAuthentication();
-    displayCartItemCount();    
+    displayCartItemCount();
 }

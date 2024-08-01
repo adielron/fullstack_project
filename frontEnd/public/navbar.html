@@ -62,12 +62,20 @@
 <div role="search" aria-label="Site Search">
     <form method="get" action="search_results.html" class="search-bar" id="searchForm">
         <input type="text" name="query" placeholder="Search..." aria-label="Search Input" class="searchInput" id="searchInput">
-        <button type="submit" aria-label="Submit Search" class="searchButton">
+       
+    <div class="tooltip-container">
+        <button type="submit" aria-label="Submit Search" class="searchButton" id="searchButton">
             <img src="/icons/search.png" alt="Search">
-        </button>         
+        </button>
+        <span class="tooltip-text">Search</span>
+    </div>
+        
+    <div class="tooltip-container">
         <a href="/search_advanced.html" class="advanced-search-button" aria-label="Advanced Search">
             <img src="/icons/searchAdv.png" alt="SearchAdv">
-        </a>               
+        </a>
+        <span class="tooltip-text">Advanced Search</span>
+    </div>          
     </form>      
 </div>
 </body>

@@ -9,12 +9,18 @@
   <script type="module">
     import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
     import { updateNavbarDisplay } from './navbar.js';
-    import { fetchAccountDetails } from './authenticationModule.js';
+    import { fetchAccountDetails, addEditProfileEventListener, handleEditProfileForm } from './authenticationModule.js';
     import { loadPurchaseHistory } from './purchaseModule.js';
     // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
     loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);
     fetchAccountDetails();
-    loadPurchaseHistory();     
+    loadPurchaseHistory();  
+    
+    document.addEventListener('DOMContentLoaded', () => {
+            const editProfileButton = document.getElementById('editProfileBtn');
+            addEditProfileEventListener(editProfileButton);
+            handleEditProfileForm();
+        });
   </script>     
   <title>My Account</title>
 </head>
@@ -28,16 +34,50 @@
     <main>
       <section>
         <form id="myProfile" class="AREAForm">
-          <h2>My profile:</h2>   
+          <h2>My profile</h2>   
           <label id="userNameLabel"></label>
-          <label id="userRoleLabel"></label>  
+          <label id="userRoleLabel"></label>
+          <br><br>
+          <button id="editProfileBtn" class="AREAButton">
+            <img src="/icons/addItem.png" alt="Edit Profile Icon" /> Edit Profile
+          </button>
         </form>
+        <div id="editProfilePopup" class="popup">
+          <form id="editProfileForm" class="AREAForm">
+            <h2>Edit Profile</h2>            
+
+            <div class="form-group">
+              <label for="editEmail">Email:</label>
+              <input type="text" id="editEmail" name="email" />
+            </div>
+
+            <div class="form-group">
+              <label for="editPassword">Password:</label>
+              <input type="text" id="editPassword" name="password" required />
+            </div> 
+
+            <div class="form-group">
+              <label for="editPhone">Phone Number:</label>
+              <input type="text" id="editPhone" name="phone" />
+            </div>
+
+            <div class="form-group">
+              <label for="editAddress">Address:</label>
+              <input type="text" id="editAddress" name="address" />
+            </div>
+
+            <div class="form-actions">
+              <button type="submit">Save</button>
+              <button type="button" id="closeEditPopupBtn">Close</button>
+            </div>
+          </form>
       </section>
       <section>
-        <h2>My purchase history:</h2>   
+        <h2>My purchase history</h2>   
       <table id="purchaseHistoryTable" class="AREATable">
         <thead>
             <tr>
+                <th>Image</th>
                 <th>Name</th>
                 <th>Description</th>
                 <th>Date</th>
@@ -48,6 +88,7 @@
             <!-- Purchase history will be populated here -->
         </tbody>
       </table>
+      <div id="loadingIndicator">Loading data...</div>
       </section>
     </main>
 

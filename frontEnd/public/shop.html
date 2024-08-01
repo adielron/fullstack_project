@@ -3,7 +3,7 @@
   <head>
     <link rel="icon" type="image/png" href="/icons/logo.png" />
     <link rel="stylesheet" href="./shop.css" />
-    <link rel="stylesheet" href="./styles.css" />    
+    <link rel="stylesheet" href="./styles.css" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AREA</title>
@@ -17,9 +17,36 @@
       </header>
 
       <main>
-        <h1> </h1>
-        <div class="shop-item-container" id="itemContainer">          
+        <h1></h1>
+        <div class="category-buttons">
+          <button class="category-btn" data-category="all">
+            <img src="icons/category-all.png" alt="All Icon" /> All
+          </button>
+          <button class="category-btn" data-category="TV">
+            <img src="icons/category-tv.png" alt="TV Icon" /> TV
+          </button>
+          <button class="category-btn" data-category="Computers">
+            <img src="icons/category-computers.png" alt="Computers Icon" />
+            Computers
+          </button>
+          <button class="category-btn" data-category="Mobile">
+            <img src="icons/category-mobile.png" alt="Mobile Icon" /> Mobile
+          </button>
+          <button class="category-btn" data-category="Appliances">
+            <img src="icons/category-appliances.png" alt="Appliances Icon" />
+            Appliances
+          </button>
+          <button class="category-btn" data-category="Kitchen">
+            <img src="icons/category-kitchen.png" alt="Kitchen Icon" /> Kitchen
+          </button>
+          <button class="category-btn" data-category="Tools">
+            <img src="icons/category-tools.png" alt="Tool Icon" /> Tools
+          </button>
+          <button class="category-btn" data-category="Lighting">
+            <img src="icons/category-lighting.png" alt="Lighting Icon" /> Lighting
+          </button>
         </div>
+        <div class="shop-item-container" id="itemContainer"></div>
       </main>
 
       <footer>
@@ -29,12 +56,35 @@
 
     <script type="module">
       import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
-      import { updateNavbarDisplay } from './navbar.js';
-      import { fetchItems } from "./itemDisplayModule.js";      
-      
+      import { updateNavbarDisplay } from "./navbar.js";
+      import { fetchItems, fetchItemsByCategory } from "./itemDisplayModule.js";
+
       // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
       loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);
-      fetchItems();
+
+      // Function to handle category button clicks
+      function handleCategoryClick(event) {
+        const button = event.currentTarget; // Correct button element
+        const category = button.getAttribute("data-category");
+
+        if (category) {          
+          fetchItemsByCategory(category);
+        } else {
+          console.error("Category attribute is missing or invalid");
+        }
+      }
+
+      // Add event listeners to category buttons
+      document.addEventListener("DOMContentLoaded", () => {
+        document
+          .querySelectorAll(".category-buttons .category-btn")
+          .forEach((button) => {
+            button.addEventListener("click", handleCategoryClick);
+          });
+
+        // Fetch all items by default
+        fetchItems();
+      });
     </script>
   </body>
 </html>

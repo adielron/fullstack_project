@@ -10,12 +10,7 @@
       import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
       import { updateNavbarDisplay } from "./navbar.js";
       // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update display
-      loadHTMLWithScriptAndCallback(
-        "navbar.html",
-        "navbar",
-        "navbar.js",
-        updateNavbarDisplay
-      );
+      loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);
     </script>
     <title>About AREA</title>
   </head>
@@ -25,23 +20,27 @@
         <div id="navbar"></div>
       </header>
 
-      <main>
+      <main>        
         <form id="about" class="AREAAbout">
-          <h2>About AREA</h2>
+          <img src="icons/logo.png">
+          <h2>About AREA</h2>          
           <h3>The project was made by:</h3>
           <label>Adi Elron</label>
           <label>Raz Diamond</label>
           <label>Elor Itzkovitz</label>
-          <label>Adi Cahli</label>
+          <label>Adi Cahal</label>
         </form>
       </main>
       <aside>
         <h2>Links</h2>
         <ul>
-          <li><a href="https://github.com/adielron/fullstack_project">GitHub</a></li>          
+          <li><a href="https://github.com/adielron/fullstack_project"  target=”_blank”>GitHub</a></li>          
         </ul>
         <ul>
-          <li><a href="https://fonts.google.com/specimen/Roboto">Font used in the project</a></li>
+          <li><a href="https://www.facebook.com/profile.php?id=61563619134770"  target=”_blank”>Facebook</a></li>          
+        </ul>
+        <ul>
+          <li><a href="https://fonts.google.com/specimen/Roboto"  target=”_blank”>Font used in the project</a></li>
         </ul>
       </aside>
 

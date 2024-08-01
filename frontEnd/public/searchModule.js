@@ -1,75 +1,54 @@
 // Module to handle searching
 
-// Function to display search results in itemContainer
-export function displaySearchResults(results) {
-    const itemContainer = document.getElementById('itemContainer');
-    itemContainer.innerHTML = '';
+import { displayItems, fetchItems } from './itemDisplayModule.js';
+import { addToCart } from './cartModule.js';
 
-    if (results.length === 0) {
-        const noResultsMessage = document.createElement('div');
-        noResultsMessage.textContent = 'No items found.';
-        itemContainer.appendChild(noResultsMessage);
-    } else {
-        results.forEach(item => {
-            const itemDiv = document.createElement('div');
-            itemDiv.classList.add('item');
-
-            const img = document.createElement('img');
-            img.src = item.img;
-            img.alt = item.name;
-            img.style.width = '100px'; 
-
-            const name = document.createElement('h3');
-            name.textContent = item.name;
-
-            const description = document.createElement('p');
-            description.textContent = item.description;
-
-            const price = document.createElement('p');
-            price.textContent = 'Price: $' + item.price.toFixed(2);
-
-            const country = document.createElement('p');
-            country.textContent = 'Country: ' + item.madeIn;
-
-            const button = document.createElement('button');
-            button.textContent = 'Add to Cart';
-            button.addEventListener('click', function () {
-                addToCart(item);
-            });
-
-            itemDiv.appendChild(img);
-            itemDiv.appendChild(name);
-            itemDiv.appendChild(description);
-            itemDiv.appendChild(price);
-            itemDiv.appendChild(country);
-            itemDiv.appendChild(button);
-
-            itemContainer.appendChild(itemDiv);
-        });
+// Fetch items based on search query
+export async function fetchSearchResults(query, container) {
+    try {
+        const response = await fetch(`http://localhost:3000/items/search?query=${encodeURIComponent(query)}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch search results');
+        }
+        const items = await response.json();
+        displayItems(items, container, addToCart);
+    } catch (error) {
+        console.error('Error fetching search results:', error);
     }
 }
 
-// Fetch selectable options for filters
-export async function fetchSelectableOptions(valueExtractor, input, defaultOptionText) {
-    try {
-        const response = await fetch("http://localhost:3000/items");
-        const items = await response.json();
-        console.log(items); // Ensure the items data is correctly fetched
+// Initialize search functionality
+export function initializeSearch() {
+    function getQueryParameter(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
 
-        // Extract unique values and sort alphabetically
-        const values = [...new Set(items.map(valueExtractor))].sort();
+    // Fetch search results based on query parameter
+    const query = getQueryParameter('query');      
+    if (query) {        
+        const container = document.getElementById('itemContainer');
+        fetchSearchResults(query, container);
 
-        // Populate select options
-        const select = document.getElementById(input);
-        select.innerHTML = `<option value="">${defaultOptionText}</option>`;
-        values.forEach(value => {
-            const option = document.createElement("option");
-            option.value = value;
-            option.textContent = value;
-            select.appendChild(option);
-        });
-    } catch (error) {
-        console.error("Error fetching items:", error);
+        // Update the header with the query
+        const searchHeader = document.querySelector('h1');
+        if (searchHeader) {
+            searchHeader.textContent = `Displaying search results for "${query}"`;
+        }
+
+        // Add event listener to the search input
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.querySelector('.searchButton');
+
+        if (searchInput && searchButton) {
+            // Initially disable the button if the input is empty
+            searchButton.disabled = !searchInput.value.trim();
+
+            // Enable or disable the button based on input value
+            searchInput.addEventListener('input', () => {
+                searchButton.disabled = !searchInput.value.trim();
+            });
+        }
     }
 }
 
@@ -104,3 +83,84 @@ export function initializeTabs() {
 document.addEventListener('DOMContentLoaded', () => {
     initializeTabs();
 });
+
+// Add event listener for the advanced search buttons
+export function initializeAdvancedSearch() {
+    document.getElementById("advancedSearchButton1").addEventListener("click", () => {
+        const priceFrom = document.getElementById("priceFromInput").value.trim();
+        const priceTo = document.getElementById("priceToInput").value.trim();
+        const quality = document.getElementById("qualityInput").value.trim();
+        const distributor = document.getElementById("distributorInput").value.trim();
+        const itemsList = document.getElementById('itemContainer');
+        fetchAdvancedSearch1(priceFrom, priceTo, quality, distributor, itemsList);
+    });
+
+    document.getElementById("advancedSearchButton2").addEventListener("click", () => {
+        const color = document.getElementById("colorInput").value.trim();
+        const madeIn = document.getElementById("madeInInput").value.trim();
+        const weight = document.getElementById("weightInput").value.trim();
+        const itemsList = document.getElementById('itemContainer');
+        fetchAdvancedSearch2(color, madeIn, weight, itemsList);
+    });
+
+    document.getElementById("resetButton1").addEventListener("click", () => {        
+        fetchItems();
+    });
+
+    document.getElementById("resetButton2").addEventListener("click", () => {        
+        fetchItems();
+    });
+}
+
+// Fetch items based on criteria from form 1
+export async function fetchAdvancedSearch1(priceFrom, priceTo, quality, distributor, container) {
+    try {
+        const response = await fetch(
+            `http://localhost:3000/items/price-and-quality?priceFrom=${priceFrom}&priceTo=${priceTo}&quality=${quality}&distributor=${distributor}`
+        );
+        const items = await response.json();
+        console.log(items);
+        displayItems(items, container, addToCart);
+    } catch (error) {
+        console.error("Error fetching items:", error);
+        alert(error);
+    }
+}
+
+// Fetch items based on criteria from form 2
+export async function fetchAdvancedSearch2(color, madeIn, weight, container) {
+    try {
+        const response = await fetch(
+            `http://localhost:3000/items/criteria?color=${color}&madeIn=${madeIn}&weight=${weight}`
+        );
+        const items = await response.json();
+        console.log(items);
+        displayItems(items, container, addToCart);
+    } catch (error) {
+        console.error("Error fetching items:", error);
+    }
+}
+
+// Fetch selectable options for filters
+export async function fetchSelectableOptions(valueExtractor, input, defaultOptionText) {
+    try {
+        const response = await fetch("http://localhost:3000/items");
+        const items = await response.json();
+        console.log(items); // Ensure the items data is correctly fetched
+
+        // Extract unique values and sort alphabetically
+        const values = [...new Set(items.map(valueExtractor))].sort();
+
+        // Populate select options
+        const select = document.getElementById(input);
+        select.innerHTML = `<option value="">${defaultOptionText}</option>`;
+        values.forEach(value => {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = value;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Error fetching items:", error);
+    }
+}
