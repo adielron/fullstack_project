@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>    
+    <link rel="icon" type="image/png" href="/icons/logo.png" />
     <link rel="stylesheet" href="./shop.css">
     <link rel="stylesheet" href="./styles.css">
     <meta charset="UTF-8">
@@ -8,11 +9,12 @@
     <script type="module">
         import { loadHTMLWithScriptAndCallback } from "./HTMLLoader.js";
         import { updateNavbarDisplay } from './navbar.js'; 
-        import { displaySearchResults } from "./searchModule.js";
-        import { addToCart, displayCartItemCount } from "./cartModule.js";       
+        import { initializeSearch } from "./searchModule.js";               
   
         // Call loadHTMLWithScript function to include navbar.html, load navbar.js and update cart item count
         loadHTMLWithScriptAndCallback("navbar.html", "navbar", "navbar.js", updateNavbarDisplay);
+
+        initializeSearch();        
     </script>         
         
     </script>
@@ -27,7 +29,7 @@
         <main>
             <h1>Search results</h1>
 
-            <div class="item-container" id="itemContainer">  </div>
+            <div class="shop-item-container" id="itemContainer">  </div>
                 <!-- Item list will be dynamically populated here -->
             </div> 
         </main>

@@ -241,12 +241,12 @@ export function addLoginListener() {
             username: $('#name').val(),
             email: $('#email').val(),
             password: $('#password').val()
-        };
+        };        
 
         // Perform login and return the person to the previous page
         handleLogin(formData)
             .then(() => {
-                console.log('Login successful');
+                console.log('Login successful');                
                 window.location.href = document.referrer;
             })
             .catch(error => {
@@ -289,7 +289,7 @@ document.addEventListener('hideLinks', () => {
 
 // Fetch account details
 export function fetchAccountDetails() {
-    fetch('http://localhost:3000/auth/status', {
+    return fetch('http://localhost:3000/auth/status', {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -311,6 +311,14 @@ export function fetchAccountDetails() {
             if (userNameLabel && userRoleLabel) {
                 userNameLabel.textContent = `Username: ${data.user.username}`;
                 userRoleLabel.textContent = `Role: ${data.user.role}`;
+
+                // Populate the form with current user profile details                
+                document.getElementById('editEmail').value = data.user.email || '';
+                document.getElementById('editPassword').value = '';
+                document.getElementById('editPhone').value = data.user.phone || '';
+                document.getElementById('editAddress').value = data.user.address || '';
+
+                return data.user._id; // Return user ID for further use
             } else {
                 console.error('Labels not found');
             }
@@ -318,4 +326,72 @@ export function fetchAccountDetails() {
         .catch(error => {
             console.error('Error fetching user details:', error);
         });
+}
+
+// Add event listener for edit profile button
+export function addEditProfileEventListener(editProfileButton) {
+    editProfileButton.addEventListener('click', async function () {
+        const userId = await fetchAccountDetails();
+        if (userId) {            
+            document.getElementById('editUserId').value = userId;
+            document.getElementById('editProfilePopup').style.display = 'block';
+        } else {
+            console.error('User ID not found');
+        }
+    });
+}
+
+// Handle form submission for editing a user profile
+export function handleEditProfileForm() {
+    $(document).ready(function () {
+        $('#editProfileForm').submit(function (event) {
+            event.preventDefault();
+
+            const authStatus = getAuthentication();
+
+            // Check if the user is authenticated
+            if (!authStatus.isAuthenticated) {
+                $('#errorMessage').text('You must be authenticated to edit your profile.').show();
+                return;
+            }
+
+            // Serialize the form data
+            var formData = $(this).serialize();
+            var userId = $('#editUserId').val();
+
+            // Send a PUT request to the backend
+            $.ajax({
+                type: 'PUT',
+                url: `http://localhost:3000/users/${userId}`,
+                data: formData,
+                contentType: 'application/x-www-form-urlencoded',
+                xhrFields: {
+                    withCredentials: true
+                },
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                success: function (response) {
+                    // Handle the successful response
+                    $('#editErrorMessage').hide();
+                    $('#editSuccessMessage').show().delay(3000).fadeOut();
+                    $('#editProfileForm')[0].reset();
+
+                    // Hide the edit profile form and popup
+                    $('#editProfilePopup').hide();
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors
+                    console.error('Error updating user profile:', error);
+                    $('#editErrorMessage').show();
+                }
+            });
+        });
+
+        // Add event listener for closing the popup
+        $('#closeEditPopupBtn').click(function () {
+            $('#editProfilePopup').hide();
+        });
+    });
 }

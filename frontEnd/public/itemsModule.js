@@ -1,8 +1,17 @@
+// Module for item management
 
 import { getAuthentication } from './authenticationModule.js';
 
 // Load table items
 export function loadItemTableData() {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const tableBody = document.querySelector('#itemsTable tbody');
+    const tableElements = document.getElementsByClassName('AREATable');
+
+    // Show loading indicator
+    loadingIndicator.style.display = 'block';
+    tableBody.innerHTML = ''; // Clear previous data
+
     fetch('http://localhost:3000/items')
         .then(response => {
             if (!response.ok) {
@@ -11,7 +20,6 @@ export function loadItemTableData() {
             return response.json();
         })
         .then(items => {
-            const tableBody = document.querySelector('#itemsTable tbody');
             tableBody.innerHTML = '';
 
             if (items.length === 0) {
@@ -23,6 +31,7 @@ export function loadItemTableData() {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${item._id}</td>
+                    <td><img src="${item.img}" alt="${item.name}" style="width: 50px; height: auto;"></td>
                     <td>${item.category}</td>
                     <td>${item.name}</td>
                     <td>${item.description}</td>
@@ -40,10 +49,49 @@ export function loadItemTableData() {
                 addDeleteEventListener(row.querySelector('.delete-btn'));
             });
         })
+        .finally(() => {
+            // Hide loading indicator and show AREATable elements
+            loadingIndicator.style.display = 'none';
+            for (let element of tableElements) {
+                element.style.display = 'table';
+            }
+        })
         .catch(error => {
             console.error('Error fetching items:', error);
+            loadingIndicator.textContent = 'Error loading data';
         });
 }
+
+// Function to filter table items based on search input
+export function filterTableItems(query) {
+    const tableBody = document.querySelector('#itemsTable tbody');
+    const rows = tableBody.querySelectorAll('tr');
+
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const itemName = cells[2].textContent.toLowerCase();
+        const itemDescription = cells[3].textContent.toLowerCase();
+        
+        if (itemName.includes(query.toLowerCase()) || itemDescription.includes(query.toLowerCase())) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+// Event listener for search input
+document.getElementById('searchInput').addEventListener('input', (event) => {
+    const query = event.target.value.trim();
+    filterTableItems(query);
+});
+
+// Handle reset query
+document.getElementById("resetButton").addEventListener("click", () => { 
+    const searchInput = document.getElementById('searchInput');  
+    searchInput.value = "";
+    loadItemTableData();
+});
 
 // Create new item
 export function createItem() {
@@ -53,34 +101,34 @@ export function createItem() {
 
             const authStatus = getAuthentication();
 
-                       // Check if the user is authenticated as a manager
-                       if (!authStatus.isAuthenticated || authStatus.userRole !== 'manager') {
-                        $('#errorMessage').text('You must be a manager to add items.').show();
-                        return;
-                    }
-        
-                    var jsonData = {};
-                    $('#createItemForm').find('input, textarea, select').each(function() {
-                        jsonData[this.name] = $(this).val();
-                    });
-                    
-                    // Handle checkbox separately
-                    jsonData.publishToFacebook = $('#publishToFacebook').is(':checked');
-        
-        
-                    // Send a POST request to the backend
-                    $.ajax({
-                        type: 'POST',
-                        url: 'http://localhost:3000/items',
-                        data: JSON.stringify(jsonData),
-                        contentType: 'application/json',
-                        xhrFields: {
-                            withCredentials: true
-                        },
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        },
+            // Check if the user is authenticated as a manager
+            if (!authStatus.isAuthenticated || authStatus.userRole !== 'manager') {
+                $('#errorMessage').text('You must be a manager to add items.').show();
+                return;
+            }
+
+            var jsonData = {};
+            $('#createItemForm').find('input, textarea, select').each(function () {
+                jsonData[this.name] = $(this).val();
+            });
+
+            // Handle checkbox separately
+            jsonData.publishToFacebook = $('#publishToFacebook').is(':checked');
+
+
+            // Send a POST request to the backend
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:3000/items',
+                data: JSON.stringify(jsonData),
+                contentType: 'application/json',
+                xhrFields: {
+                    withCredentials: true
+                },
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
                 success: function (response) {
                     // Handle the successful response
                     $('#errorMessage').hide();
@@ -91,6 +139,7 @@ export function createItem() {
                     const tableBody = $('#itemsTable tbody');
                     const row = $('<tr>').html(`
                         <td>${response._id}</td>
+                        <td><img src="${item.img}" alt="${item.name}" style="width: 50px; height: auto;"></td>
                         <td>${response.category}</td>
                         <td>${response.name}</td>
                         <td>${response.description}</td>
@@ -204,6 +253,7 @@ export function handleEditItemForm() {
                     const row = $(`button.edit-btn[data-id="${itemId}"]`).closest('tr');
                     row.html(`
                         <td>${response._id}</td>
+                        <td><img src="${response.img}" alt="${response.name}" style="width: 50px; height: auto;"></td>
                         <td>${response.category}</td>
                         <td>${response.name}</td>
                         <td>${response.description}</td>
@@ -236,6 +286,7 @@ export function handleEditItemForm() {
 export function addDeleteEventListener(deleteButton) {
     deleteButton.addEventListener('click', function () {
         const itemId = this.getAttribute('data-id');
+
         const authStatus = getAuthentication();
 
         // Check if the user is authenticated as a manager

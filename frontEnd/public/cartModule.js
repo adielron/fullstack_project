@@ -3,8 +3,8 @@
 import { getAuthentication } from './authenticationModule.js';
 
 // Get cart items
-export function getCart() {
-    return JSON.parse(localStorage.getItem('cart')) || [];
+export function getCart() {    
+    return JSON.parse(localStorage.getItem('cart')) || [];    
 }
 
 // Check if the cart is empty
@@ -20,11 +20,11 @@ export function addToCart(item) {
         return;
     } else {
         let cart = getCart();
-        cart.push(item);
-        localStorage.setItem('cart', JSON.stringify(cart));
         incrementCartItemCount();        
-        item.stock--;
-        updateStock(item, item.stock);        
+        item.stock--;        
+        updateStock(item, item.stock); 
+        cart.push(item);
+        localStorage.setItem('cart', JSON.stringify(cart));       
         console.log('Item added to cart:', item);
         console.log('Cart:', cart);
     }
@@ -33,18 +33,15 @@ export function addToCart(item) {
 // Remove an item from the cart
 export function removeFromCart(itemToRemove) {
     let cart = getCart();
-    // Find the index of the first instance of the item to remove
     const itemIndex = cart.findIndex(item => item.name === itemToRemove.name);
     if (itemIndex !== -1) {
-        // Remove the first instance of the item
         cart.splice(itemIndex, 1);
         localStorage.setItem('cart', JSON.stringify(cart));
         decrementCartItemCount();
-        itemToRemove.stock++;
+        itemToRemove.stock++;        
         updateStock(itemToRemove, itemToRemove.stock);
         console.log('Item removed from cart:', itemToRemove);
         console.log('Cart:', cart);
-        // Dispatch a custom event for item removal
         const event = new CustomEvent('itemRemoved');
         document.dispatchEvent(event);
     }
@@ -172,8 +169,8 @@ function purchaseAllItems() {
 }
 
 // Update item stock
-export function updateStock(item, newStock) {
-    fetch(`http://localhost:3000/items/${item.id}`, {
+export function updateStock(item, newStock) {    
+    fetch(`http://localhost:3000/items/${item._id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -184,15 +181,14 @@ export function updateStock(item, newStock) {
     .then(response => {        
         if (!response.ok) {
             throw new Error('Failed to update item stock');            
-        }
-        return response.json();
+        }        
+        return response.json();        
     })
     .then(updatedItem => {
-        console.log('Item stock updated successfully:', updatedItem);
-        alert("yay");
+        console.log('Item stock updated successfully:', updatedItem);           
     })
     .catch(error => {
         console.error('Error updating item stock:', error);
-        alert("how");
+        alert(error);
     });
 }

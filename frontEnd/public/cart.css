@@ -1,10 +1,12 @@
-  .shop-item {
+  .shop-item {   
+    font-family: 'AREAFont', sans-serif; 
     width: 600px;
+    margin: 0 auto;
     margin-bottom: 20px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: #f9f9f9;
+    background-color: #f9f9f9;       
   }
   .shop-item img {
     max-width: 100px;
@@ -13,14 +15,20 @@
     margin: 0 auto 10px;
   }
   .shop-item h2,
-  .shop-item h3 {
+  .shop-item h3 {    
     text-align: center;
   }
-  .shop-item p {
-    font-family: 'AREAFont', sans-serif;
+  .shop-item p {    
     margin-bottom: 5px;
     text-align: center;
   }
+
+  .shop-item h4 {    
+    font-size: 24px;
+    margin: 5px 0;  
+    text-align: center;  
+  }
+
   .shop-item button,
   .purchase-button {
     display: block;
@@ -37,4 +45,25 @@
   .purchase-button {
     margin: 0px;
     margin-bottom: 50px;
+  }
+
+  .cart-button {
+    font-size: 16px;  
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    border: none;
+    background-color: #fff;     
+  }
+  
+  .cart-button img {    
+    height: 20px;
+    width: 20px;    
+    margin-left: 20px;
+    margin-right: 10px;   
+    margin-top: 5px;
+  }
+
+  .cart-button:hover {
+    background-color: #154c83;
   }

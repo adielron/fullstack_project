@@ -4,6 +4,13 @@
 export function loadPurchaseHistory() {
     document.addEventListener("DOMContentLoaded", function() {
         const userId = localStorage.getItem('isAuthenticated'); // Retrieve user ID from local storage
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const tableElements = document.getElementsByClassName('AREATable');
+        const tableBody = document.querySelector('#purchaseHistoryTable tbody');
+
+        // Show loading indicator
+        loadingIndicator.style.display = 'block';
+        tableBody.innerHTML = ''; // Clear previous purchases
 
         fetch('http://localhost:3000/purchases')
             .then(response => {
@@ -15,9 +22,6 @@ export function loadPurchaseHistory() {
             .then(purchases => {
                 // Sort purchases by date in descending order
                 purchases.sort((a, b) => new Date(b.date) - new Date(a.date));
-                
-                const tableBody = document.querySelector('#purchaseHistoryTable tbody');
-                tableBody.innerHTML = ''; // Clear previous purchases
 
                 const purchasePromises = purchases
                     .filter(purchase => purchase.customerId === userId)
@@ -31,6 +35,7 @@ export function loadPurchaseHistory() {
                             })
                             .then(item => {
                                 return {
+                                    img: item.img,
                                     name: item.name,
                                     description: item.description,
                                     date: purchase.date,
@@ -50,6 +55,7 @@ export function loadPurchaseHistory() {
                             .forEach(result => {
                                 const row = document.createElement('tr');
                                 row.innerHTML = `
+                                    <td><img src="${result.img}" alt="${result.name}" style="width: 50px; height: auto;"></td>                                   
                                     <td>${result.name}</td>
                                     <td>${result.description}</td>
                                     <td>${result.date}</td>
@@ -58,12 +64,20 @@ export function loadPurchaseHistory() {
                                 tableBody.appendChild(row);
                             });
                     })
+                    .finally(() => {
+                        // Hide loading indicator
+                        loadingIndicator.style.display = 'none';
+                        for (let element of tableElements) {
+                            element.style.display = 'table';
+                        }
+                    })
                     .catch(error => {
                         console.error('Error processing purchase results:', error);
                     });
             })
             .catch(error => {
                 console.error('Error fetching purchases:', error);
+                loadingIndicator.textContent = 'Error loading data';
             });
     });
 }
@@ -71,6 +85,15 @@ export function loadPurchaseHistory() {
 // Load order history
 export function loadOrderHistory() {
     document.addEventListener("DOMContentLoaded", function() {
+
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const tableBody = document.querySelector('#orderHistoryTable tbody');
+        const tableElements = document.getElementsByClassName('AREATable');
+
+        // Show loading indicator
+        loadingIndicator.style.display = 'block';        
+        tableBody.innerHTML = '';
+
         fetch('http://localhost:3000/purchases')
             .then(response => {
                 if (!response.ok) {
@@ -81,9 +104,6 @@ export function loadOrderHistory() {
             .then(purchases => {
                 // Sort purchases by date in descending order
                 purchases.sort((a, b) => new Date(b.date) - new Date(a.date));
-                
-                const tableBody = document.querySelector('#orderHistoryTable tbody');
-                tableBody.innerHTML = ''; // Clear previous data
 
                 const itemPromises = purchases.map(purchase =>
                     fetch(`http://localhost:3000/items/${purchase.itemId}`)
@@ -109,8 +129,9 @@ export function loadOrderHistory() {
                             .filter(result => result !== null) // Filter out any null results
                             .forEach(({ item, purchase }) => {
                                 const row = document.createElement('tr');
-                                row.innerHTML = `
+                                row.innerHTML = `                                    
                                     <td>${purchase.customerId}</td>
+                                    <td><img src="${item.img}" alt="${item.name}" style="width: 50px; height: auto;"></td>
                                     <td>${item.name}</td>
                                     <td>${item.description}</td>
                                     <td>${purchase.date}</td>
@@ -119,12 +140,20 @@ export function loadOrderHistory() {
                                 tableBody.appendChild(row);
                             });
                     })
+                    .finally(() => {
+                        // Hide loading indicator
+                        loadingIndicator.style.display = 'none';
+                        for (let element of tableElements) {
+                            element.style.display = 'table';
+                        }
+                    })
                     .catch(error => {
                         console.error('Error processing item details:', error);
                     });
             })
             .catch(error => {
                 console.error('Error fetching purchases:', error);
+                loadingIndicator.textContent = 'Error loading data';
             });
     });
 }
