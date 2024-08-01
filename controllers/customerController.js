@@ -12,12 +12,27 @@ exports.getAllCustomers = async (req, res) => {
   }
 };
 
+// Get manager by username or email
+exports.findCustomerByUsernameOrEmail = async (req, res) => {
+  try {
+    const { username, email } = req.body;
+    console.log(username, email);
+    const customer = await Customer.findOne({ $or: [{ username }, { email }] });
+    if (customer) {
+      return res.status(409).json({ message: 'Username or email already exists' });
+    }    
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Get customer by email
 exports.getCustomerByEmail = async (req, res) => {
 
     try {
-      const { email } = req.query; // Extract email from query parameters
+      const { email } = req.query;
       console.log(email);
-      const customer = await Customer.findOne({ email });
+      const customer = await Customer.findOne({ username });
   
       if (!customer) {
         return res.status(404).json({ message: 'Customer not found' });
@@ -28,13 +43,7 @@ exports.getCustomerByEmail = async (req, res) => {
     }
   };
 
-
-
-
-
-
-
-
+// Create customer
 exports.createCustomer = async (req, res) => {
 console.log("create customer");
   try {
@@ -62,7 +71,6 @@ exports.updateCustomer = async (req, res) => {
     }
   };
   
-
   exports.deleteCustomer = async (req, res) => {
     try {
       const  email  = req.params.email; // Assuming email is sent in the request body\
@@ -76,7 +84,6 @@ exports.updateCustomer = async (req, res) => {
     }
   };
   
-
   exports.getCustomerByEmailReg = async (email) => {
     try {
       const customer = await Customer.findOne({ email });
