@@ -6,10 +6,15 @@ const passport = require('passport');
 
 const router = express.Router();
 
+// Register new manager profile
 router.post('/register/manager', async (req, res, next) => {
     try {
+        // Check if username or password already exist
+        await managerController.findManagerByUsernameOrEmail(req, res);        
+        await customerController.findCustomerByUsernameOrEmail(req, res);
+               
         // Create the manager using the managerController
-        // await managerController.createManager(req, res);
+        await managerController.createManager(req, res);        
 
         // Authenticate the manager after successful creation
         passport.authenticate("local", (err, user, info) => {
@@ -41,9 +46,13 @@ router.post('/register/manager', async (req, res, next) => {
     }
 });
 
-
-router.post('/register/other', async (req, res, next) => {
+// Register new customer profile
+router.post('/register/customer', async (req, res, next) => {
     try {
+        // Check if username or password already exist
+        await managerController.findManagerByUsernameOrEmail(req, res);        
+        await customerController.findCustomerByUsernameOrEmail(req, res);
+       
         // Create the customer
         await customerController.createCustomer(req, res);
 
@@ -55,7 +64,7 @@ router.post('/register/other', async (req, res, next) => {
             if (!user) {
                 // User not authenticated, handle accordingly
                 console.log("res.status(401).json({ message: 'Authentication failed' });");
-                return 
+                return
             }
             // If authentication successful, log the user in
             req.logIn(user, (err) => {
@@ -69,7 +78,7 @@ router.post('/register/other', async (req, res, next) => {
                 return res.status(201);
             });
         })
-        (req, res, next);
+            (req, res, next);
     } catch (error) {
         // Handle errors if any
         console.error(error);
@@ -79,7 +88,6 @@ router.post('/register/other', async (req, res, next) => {
         }
     }
 });
-
 
 router.get('/status', (req, res) => {
     if (req.isAuthenticated() && req.user) {
@@ -96,15 +104,12 @@ router.get('/status', (req, res) => {
     }
 });
 
-
-
-
 router.post('/login', passport.authenticate('local'), (req, res) => {
     console.log("logging in ");
     res.status(200).json({ message: 'Login successful' });
 });
 
-router.get('/logout', function(req, res, next) {
+router.get('/logout', function (req, res, next) {
     console.log("Logging out");
     req.logout(); // Passport's logout function
     console.log(" out");
