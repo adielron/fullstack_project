@@ -33,8 +33,8 @@ app.get('/cart', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'cart.html'));
 });
 
-app.get('/item', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'item.html'));
+app.get('/items', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'items.html'));
 });
 
 app.get('/login', (req, res) => {
@@ -43,6 +43,10 @@ app.get('/login', (req, res) => {
 
 app.get('/myAccount', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'myAccount.html'));
+});
+
+app.get('/orders', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'orders.html'));
 });
 
 app.get('/register', (req, res) => {
