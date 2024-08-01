@@ -22,6 +22,8 @@ function checkWorkerRole(req, res, next) {
 
 // Routes for items
 router.get('/', itemController.getAllItems); // Public route: Get all items
+router.get('/search', itemController.getItemsByQuery); // Public route: Get items by search
+router.get('/category', itemController.getItemsByCategory); // Public route: Get all items
 router.get('/criteria', itemController.getItemsByCriteria); // Public route: Get items by criteria
 router.get('/group-by-dynamic', itemController.groupItemsByDynamicCriteria); // Public route: Group items by dynamic criteria
 router.get('/price-and-quality', itemController.getItemsByPriceAndQuality); // Public route: Get items by price and quality
